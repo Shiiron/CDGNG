@@ -1,0 +1,89 @@
+<h2>
+	Calendriers : 
+	<?php
+		$nomCal = "";
+		foreach ($cal_path as $value) {
+			// Elimination de l'extension .ics
+			$tab_Explode = explode(".", $value);
+			$pathCal = $tab_Explode[0];
+
+			// Elimination du cal/ devant le nom du calendrier
+			$tab_NomCal = explode("/", $pathCal);
+			$nomCal = $nomCal . " " . $tab_NomCal[1] . ",";
+		}
+		print(substr($nomCal, 0, -1));
+	?>
+</h2>
+
+<h3>
+	<?php print(date("d/m/Y", $ts_start)); ?> 
+	au 
+	<?php print(date("d/m/Y", $ts_end));
+
+	print(" (" . (floor($this->model->total) / 3600)); ?>h)
+</h3> 
+
+<!-- Gestion de l'export sur la page de résultat -->
+<form method="post" action="index.php">
+<a class="btn btn-primary" href="index.php">Retour</a>
+
+	<select name="ics[]" multiple="multiple" class="hidden">
+		<?php
+		foreach ($cal_path as $value) {
+			print('<option selected name="ics" value="' . $value . '">' . $value . '</option>');
+		}
+		?>
+	</select>
+	<input name="startDate" class ="hidden" value="<?php print(date("d-m-Y", $ts_start)); ?>" />
+	<input name="endDate" class="hidden" value="<?php print(date("d-m-Y", $ts_end)); ?>" />
+
+	<button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
+		<i class="icon-download-alt icon-white"></i> Exporter
+	</button>
+</form>
+
+<ul class="nav nav-tabs" id="myTab">
+	<li class="active"><a href="#Actions" data-toggle="tab">Résultat par Action</a></li>
+	<li><a href="#Modalites" data-toggle="tab">Résultat par Modalité</a></li>
+	<li><a href="#Erreurs" data-toggle="tab">Erreurs</a></li>
+</ul>
+
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane in active" id="Actions">
+		<div class="row">
+			<div class="span6 well">
+				<h2>Par actions : </h2>
+				<?php $this->printTabDesc($this->model->getActions()); ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="tab-pane fade" id="Modalites">
+		<div class="row">
+			<div class="span6 well">
+				<h2>Par modalités : </h2>
+				<?php $this->printTabDesc($this->model->getModalites()); ?>
+			</div>
+		</div>
+	</div>
+	
+	<div class="tab-pane fade" id="Erreurs">
+		<ul class="inline">
+			<li><input type="checkbox" checked id="simpleError"/>Infos</li>
+			<li><input type="checkbox" checked id="seriousError"/>Avertissements</li>
+			<li><input type="checkbox" checked id="warningError"/>Erreurs</li>
+		</ul>
+				
+		<div class="well">
+			<ul>
+				<?php $this->printError(); ?>
+			</ul>
+
+	</div>
+</div>
+
+<a class="btn btn-primary" href="index.php">Retour</a>
+
+
+
+

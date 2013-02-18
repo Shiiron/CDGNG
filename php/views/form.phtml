@@ -1,0 +1,144 @@
+
+<ul class="nav nav-tabs" id="myTab">
+  <li class="active"><a href="#Actions" data-toggle="tab">Liste des Actions</a></li>
+  <li><a href="#Modalites" data-toggle="tab">Liste des Modalites</a></li>
+  <li><a href="#Calcul" data-toggle="tab">Calcul</a></li>
+</ul>
+
+
+
+<div id="myTabContent" class="tab-content">
+<div class="tab-pane in active" id="Actions">
+	<form action="index.php" method="post">
+		<button id="exportTableauAction" class="btn btn-info" type="submit" name="action" value="tableauAction">
+			<i class="icon-download-alt icon-white"></i> Exporter
+		</button>
+	</form>
+	<table class="table table-striped table-bordered table-condensed">
+		<thead>
+			<tr>
+				<th>Code</th>
+				<th>Intitulé</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+<?php
+	// Permet l'affichage du tableau des actions du cdg
+	foreach ($this->model->getTabAction() as $action => $value) {
+		print "\t\t\t<tr>";
+		print '<td>' . $action . '</td>';
+		foreach ($value as $key => $values) {
+			print '<td>' . $values . '</td>';
+		}
+		print "</tr>\n";
+	}
+?>
+		</tbody>
+	</table>
+</div>
+
+<div class="tab-pane fade" id="Modalites">	
+	<form action="index.php" method="post">
+	<button id="exportTableauModalite" class="btn btn-info" type="submit" name="action" value="tableauModalite">
+		<i class="icon-download-alt icon-white"></i> Exporter
+	</button>
+</form>
+	<table class="table table-striped table-bordered table-condensed">
+		<thead>
+			<tr>
+				<th>Code</th>
+				<th>Intitulé</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<?php
+			// Permet l'affichage du tableau des modalites du cdg
+			foreach ($this->model->getTabModalite() as $modalite => $value) {
+				print "\t\t\t<tr>";
+				print '<td>' . $modalite . '</td>';
+				foreach ($value as $key => $values) {
+					print '<td>' . $values . '</td>';
+				}
+				print "</tr>\n";
+			}
+			?>
+
+		</tbody>
+	</table>
+</div>
+
+
+<div class="tab-pane fade" id="Calcul">
+		<form method="post" action="index.php" class="form-horizontal span5">
+			<div class="control-group">
+				<label class="control-label" for="ics">Utilisateur(s) : </label>
+				<div class="controls">
+
+					<?php
+					// Récupération et affichage du nom des calendriers
+					$tab_cal_path = $this->model->getCalList();
+
+					print('<select name="ics[]" class="span3" multiple="multiple">');
+
+					// Récupération des calendriers
+					foreach ($tab_cal_path as $key => $value) {
+
+						// Elimination de l'extension .ics
+						$path = $value;
+						$tab_Explode = explode(".", $value);
+						$pathCal = $tab_Explode[0];
+
+						// Elimination du cal/ devant le nom du calendrier
+						$tab_NomCal = explode("/", $pathCal);
+						$nomCal = $tab_NomCal[1];
+
+						print('<option id="' . $key . '" name="ics" value="' . $path . '">' . $nomCal . '</option>');
+					}
+					print("</select>");
+					?>
+				</div>
+
+			</div>
+
+			<!-- Formulaire -->
+			<div class="control-group">
+
+				<label class="control-label" for="date_debut">Date de début : </label>
+				<div class="controls">
+					<div class="input-append date datepicker" id="dp3" data-date="<?php print(date("d-m-Y")); ?>" data-date-format="dd-mm-yyyy">
+						<input id="date_debut" class="span2" value="<?php print(date("d-m-Y")); ?>" type="text" name="startDate" required="required" readonly/>
+						<span class="add-on"><i class="icon-calendar"></i></span>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="date_fin">Date de fin :</label>
+				<div class="controls">
+
+					<div class="input-append date datepicker" id="dp2" data-date="<?php print(date("d-m-Y")); ?>" data-date-format="dd-mm-yyyy">
+						<input id="date_fin" class="span2" value="<?php print(date("d-m-Y")); ?>" type="text" name="endDate" required="required" readonly/>
+						<span class="add-on"><i class="icon-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="control-group">
+				<div class="controls">
+					<button id="showresults" class="btn btn-primary" type="submit" name="action" value="Montrer résultats">
+						<i class="icon-eye-open icon-white"></i> Afficher</button> 
+					<button id="export" class="btn btn-info control-button" type="submit" name="action" value="Exporter">
+						<i class="icon-download-alt icon-white"></i> Exporter
+					</button>
+				</div>
+			</div>
+
+		</form>	
+</div>
+</div>

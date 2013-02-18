@@ -1,0 +1,18 @@
+<?php
+	include('php/FichierCSV.php');
+	
+	// Création d'une instance de la classe FichierExcel
+	$csv = new FichierCSV();
+	
+	// Initialisation des différentes colonnes
+	$csv->Insertion("\"Code\";\"Intitulé\";\"Description\"\n");
+
+	// Insertion des données
+	foreach($tab as $code => $array){
+		$csv->Insertion('"'.$code.'";"'.$array["Intitulé"].'";"'.$array["Description"].'"');
+	}
+	
+	// Restitution du fichier
+	$csv->output('Tableau_CDG');
+	exit;
+?>
