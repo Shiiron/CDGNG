@@ -24,7 +24,12 @@ class View {
 	 ************************************************************************/
 	function showResults($cal_path, $ts_start, $ts_end) {
 
-		if($ts_end < $ts_start)
+		print("<pre>");
+		var_dump($ts_start);
+		var_dump($ts_end);
+		print("</pre>");
+
+		if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
 			list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
 		
 		include("php/views/header.phtml");
@@ -117,7 +122,6 @@ class View {
 	//Fonction qui permet d'obtenir un tableau trier par ordre décroissant
 	private function printTabDesc($tab) {
 
-	
 		while (!empty($tab)){
 			
 			$code = "";
