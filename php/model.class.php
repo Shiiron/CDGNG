@@ -133,6 +133,10 @@ class Model {
 
 		foreach ($tab_event as $event) {
 
+			//Ignore event without SUMMARY
+			if(!isset($event["SUMMARY"]))
+				continue;
+
 			// Test si l'évènement est récursif
 			// Et si il l'est, le mettre dans le log des erreurs
 			if (array_key_exists("RRULE", $events)) {
@@ -173,8 +177,8 @@ class Model {
 					$action = substr($code, 0, -1);
 					
 					// Permet l'ajout du code et de la modalites dans un tableau pour le traitement dans la vue
-					$this->addCode($action, $modalite, $event_duration, $this->actions, $this->tabAction);
-					$this->addCode($modalite, $action, $event_duration, $this->modalites, $this->tabModalite);
+					$this->addCode($action, $modalite, $event_duration, $this->actions, $this->tabAction, $event);
+					$this->addCode($modalite, $action, $event_duration, $this->modalites, $this->tabModalite, $event);
 
 					$this->total += $event_duration;
 				}
@@ -192,7 +196,7 @@ class Model {
 		return true;
 	}
 
-	protected function addCode($code, $subcode, $event_duration, &$tab, $list_codes){
+	protected function addCode($code, $subcode, $event_duration, &$tab, $list_codes, $event){
 		// Ajoute un code dans le tableau qui va bien
 		if (!array_key_exists($code, $list_codes)) {
 			$this->addToError(2,
@@ -224,7 +228,9 @@ class Model {
 
 	}
 
-	function analyseCal($cal_path, &$ts_start, &$ts_end) {
+	function analyseCal($cal_path, $ts_start, $ts_end) {
+
+
 		$ts_start = $this->strToTime($ts_start);
 		$ts_end = $this->strToTime_EndDate($ts_end);
 

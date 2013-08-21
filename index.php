@@ -22,8 +22,8 @@
 		case "Exporter":
 			if(isset($_POST["ics"]))
 				$view->showCsv($_POST["ics"],
-	                          ($_POST["startDate"]),
-	                          ($_POST["endDate"]));
+	                           $_POST["startDate"],
+	                           $_POST["endDate"]);
 			else
 				print ("Aucun fichier n'a été sélectionné");
 			break;

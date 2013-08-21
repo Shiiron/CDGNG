@@ -1,24 +1,15 @@
 <h2>
 	Calendriers : 
 	<?php
-		$nomCal = "";
-		foreach ($cal_path as $value) {
-			// Elimination de l'extension .ics
-			$tab_Explode = explode(".", $value);
-			$pathCal = $tab_Explode[0];
-
-			// Elimination du cal/ devant le nom du calendrier
-			$tab_NomCal = explode("/", $pathCal);
-			$nomCal = $nomCal . " " . $tab_NomCal[1] . ",";
-		}
+		$nomCal = $this->nomCal($cal_path);
 		print(substr($nomCal, 0, -1));
 	?>
 </h2>
 
 <h3>
-	<?php print(date("d/m/Y", $ts_start)); ?> 
+	<?php print(date("d/m/Y", $this->model->strToTime($ts_start))); ?> 
 	au 
-	<?php print(date("d/m/Y", $ts_end));
+	<?php print(date("d/m/Y", $this->model->strToTime_EndDate($ts_end)));
 
 	print(" (" . (floor($this->model->total) / 3600)); ?>h)
 </h3> 
@@ -34,8 +25,8 @@
 		}
 		?>
 	</select>
-	<input name="startDate" class ="hidden" value="<?php print(date("d-m-Y", $ts_start)); ?>" />
-	<input name="endDate" class="hidden" value="<?php print(date("d-m-Y", $ts_end)); ?>" />
+	<input name="startDate" class ="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime($ts_start))); ?>" />
+	<input name="endDate" class="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime_EndDate($ts_end))); ?>" />
 
 	<button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
 		<i class="icon-download-alt icon-white"></i> Exporter

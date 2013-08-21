@@ -39,26 +39,30 @@ class View {
 	/************************************************************************
 	 * Show result as CSV File
 	 ************************************************************************/
-	function showCsv($cal_path, $ts_start, $ts_end) {
+	function showCsv($tab_cal, $ts_start, $ts_end) {
 
-		$this->model->analyseCal($cal_path, $ts_start, $ts_end);
-		$tab_results = $this->model->getActions();
-		$nomCal = $this->nomCal($cal_path);
-	
-		// Create file content
-		$csv = "\"Nom\";\"Actions\";\"Modalités\";\"Temps(min)\"";
-		foreach($tab_results as $action => $code){
-			foreach($code['subcode'] as $subcode => $value){
-				$csv .= "\n\"".$nomCal.'";"'.$action.'";"'.$subcode.'";'.($value/60);
-			}
-		}
-		
+		$nomCal = $this->nomCal($tab_cal);
+
 		// File headers (this is not html)
 		header("Content-type: application/vnd.ms-excel");
 		header("Content-disposition: attachment; filename=$nomCal.csv");
 
-		// Send file content
-		print $csv;
+		print("\"Nom\";\"Actions\";\"Modalités\";\"Temps(min)\"");
+
+		foreach ($tab_cal as $key => $cal) {
+			$this->model->analyseCal(array($cal), $ts_start, $ts_end);
+			$tab_results = $this->model->getActions();
+			$cal_name = $this->nomCal(array($cal));
+			
+			// Send file content
+			
+			foreach($tab_results as $action => $code){
+				foreach($code['subcode'] as $subcode => $value){
+					print("\n\"".$cal_name.'";"'.$action.'";"'.$subcode.'";'.($value/60));
+				}
+			}
+			
+		}
 	}
 
 	private function printTab($tab){
@@ -212,6 +216,7 @@ class View {
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
 	function nomCal($cal_path){
+		$nomCal = "";
 		foreach ($cal_path as $value) {
 		// Elimination de l'extension .ics
 		$tab_Explode = explode(".", $value);
@@ -219,9 +224,9 @@ class View {
 
 		// Elimination du cal/ devant le nom du calendrier
 		$tab_NomCal = explode("/", $pathCal);
-		$nomCal =  $tab_NomCal[1];
+		$nomCal .= $tab_NomCal[1]."+";
 		}
-		return $nomCal;
+		return substr($nomCal, 0, -1);
 	}
 }
 	
