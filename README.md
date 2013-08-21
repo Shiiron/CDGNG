@@ -1,7 +1,5 @@
-CDGNG
+CDGNG - Contrôle de gestion nouvelle génération.
 =====
-
-CDGNG
 
 Fait des stats pour calendrier ics avec des code inséré entre crochet.
 
