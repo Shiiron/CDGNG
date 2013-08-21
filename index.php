@@ -15,15 +15,17 @@
 				$view->showResults($_POST["ics"], 
 								   $_POST["startDate"], 
 								   $_POST["endDate"]);
-
 			else
 				print ("Aucun fichier n'as été sélectionner");
 			break;
 
 		case "Exporter":
-			$view->showCsv($_POST["ics"],
-                          ($_POST["startDate"]),
-                          ($_POST["endDate"]));
+			if(isset($_POST["ics"]))
+				$view->showCsv($_POST["ics"],
+	                          ($_POST["startDate"]),
+	                          ($_POST["endDate"]));
+			else
+				print ("Aucun fichier n'as été sélectionner");
 			break;
 		
 		case "tableauAction":
