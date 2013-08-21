@@ -4,16 +4,15 @@ class View {
 
 	private $model;
 
-
 	/************************************************************************
-	 * constructeur
+	 * Constructor
 	 ************************************************************************/
 	function __construct($model) {	
 		$this->model = $model;
 	}
 
 	/************************************************************************
-	 * Fonction d'affichage 
+	 * Show Form
 	 ************************************************************************/
 	function showForm() {
 		include("php/views/form.phtml");
@@ -21,7 +20,7 @@ class View {
 	}
 
 	/************************************************************************
-	 * Fonction qui affiche le traitement des données
+	 * Show Result as HTML
 	 ************************************************************************/
 	function showResults($cal_path, $ts_start, $ts_end) {
 
@@ -37,12 +36,29 @@ class View {
 
 	}
 
+	/************************************************************************
+	 * Show result as CSV File
+	 ************************************************************************/
 	function showCsv($cal_path, $ts_start, $ts_end) {
 
 		$this->model->analyseCal($cal_path, $ts_start, $ts_end);
 		$tab_results = $this->model->getActions();
 		$nomCal = $this->nomCal($cal_path);
-		include("php/views/csv.phtml");
+	
+		// Create file content
+		$csv = "\"Nom\";\"Actions\";\"Modalités\";\"Temps(min)\"";
+		foreach($tab_results as $action => $code){
+			foreach($code['subcode'] as $subcode => $value){
+				$csv .= "\n\"".$nomCal.'";"'.$action.'";"'.$subcode.'";'.($value/60);
+			}
+		}
+		
+		// File headers (this is not html)
+		header("Content-type: application/vnd.ms-excel");
+		header("Content-disposition: attachment; filename=$nomCal.csv");
+
+		// Send file content
+		print $csv;
 	}
 
 	private function printTab($tab){

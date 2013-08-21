@@ -40,7 +40,7 @@
  * Mise a jour PHP 5.3 par Florestan bredow le 10/06/2010
  *
  */
-class ical
+class Ical
 {
 	/**
 	 * Text in file

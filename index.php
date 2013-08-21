@@ -1,6 +1,6 @@
 <?php
-	include("./php/model.php");
-	include("./php/view.php");
+	include("./php/model.class.php");
+	include("./php/view.class.php");
 
 	$model = new Model("./config.php");
 	$view = new View($model);
@@ -16,7 +16,7 @@
 								   $_POST["startDate"], 
 								   $_POST["endDate"]);
 			else
-				print ("Aucun fichier n'as été sélectionner");
+				print ("Aucun fichier n'a été sélectionné");
 			break;
 
 		case "Exporter":
@@ -25,7 +25,7 @@
 	                          ($_POST["startDate"]),
 	                          ($_POST["endDate"]));
 			else
-				print ("Aucun fichier n'as été sélectionner");
+				print ("Aucun fichier n'a été sélectionné");
 			break;
 		
 		case "tableauAction":

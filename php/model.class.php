@@ -1,6 +1,6 @@
 <?php
 
-require("php/ical.php");
+require("php/ical.class.php");
 
 class Model {
 
