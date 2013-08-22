@@ -23,12 +23,6 @@ class View {
 	 * Show Result as HTML
 	 ************************************************************************/
 	function showResults($cal_path, $ts_start, $ts_end) {
-
-		print("<pre>");
-		var_dump($ts_start);
-		var_dump($ts_end);
-		print("</pre>");
-
 		if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
 			list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
 		
@@ -38,7 +32,6 @@ class View {
 		$tabError = $this->model->getTabError();
 		include("php/views/result.phtml");
 		include("php/views/footer.phtml");
-
 	}
 
 	/************************************************************************

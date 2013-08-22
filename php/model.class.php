@@ -230,10 +230,17 @@ class Model {
 
 	function analyseCal($cal_path, $ts_start, $ts_end) {
 
+		//Reset tab
+		$this->actions = array();
+		$this->modalites = array();
+		$this->total = 0;
+		$this->tabError = array();
+
 
 		$ts_start = $this->strToTime($ts_start);
 		$ts_end = $this->strToTime_EndDate($ts_end);
 
+		//Parse each calendar		
 		foreach ($cal_path as $value) {
 			$this->parseCal($value, $ts_start, $ts_end);
 		}
