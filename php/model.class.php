@@ -139,7 +139,7 @@ class Model {
 
 			// Test si l'évènement est récursif
 			// Et si il l'est, le mettre dans le log des erreurs
-			if (array_key_exists("RRULE", $events)) {
+			if (array_key_exists("RRULE", $event)) {
 				$this->addToError(2,
 									$event["SUMMARY"],
 									"Évènement récursif",
