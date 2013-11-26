@@ -203,12 +203,36 @@ class View {
 	}
 	
 	function exportTableauCDG(){
-		if($_POST["action"] == "tableauAction")
+		if($_POST["action"] == "tableauAction") {
 			$tab = $this->model->getTabAction();
-		else
+			$nomCal = "actions";
+		} else {
 			$tab = $this->model->getTabModalite();
+			$nomCal = "modalites";
+		}
 		
-		include("php/views/csvTableauCDG.phtml");
+		/*echo "<pre>";
+			print_r($tab);
+		echo "</pre>";*/
+
+
+		include('php/csv.class.php');
+	
+		// Création d'une instance de la classe FichierExcel
+		$csv = new CSV();
+		
+		// Initialisation des différentes colonnes
+		$csv->Insertion("\"Code\";\"Intitulé\";\"Description\"");
+
+		// Insertion des données
+		foreach($tab as $code => $tab_code){
+			$csv->Insertion('"'.$code.'";"'.$tab_code["Intitulé"].'";"'.$tab_code["Description"].'"');
+		}
+		
+		// Restitution du fichier
+		$csv->output($nomCal."csv");
+
+		//include("php/views/csv.phtml");
 	}
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
