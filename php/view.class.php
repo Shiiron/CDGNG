@@ -198,8 +198,6 @@ class View {
 		foreach ($errorTab as $key => $value){
 			include("php/views/error.phtml");
 		}
-		
-		
 	}
 	
 	function exportTableauCDG(){
@@ -210,11 +208,6 @@ class View {
 			$tab = $this->model->getTabModalite();
 			$nomCal = "modalites";
 		}
-		
-		/*echo "<pre>";
-			print_r($tab);
-		echo "</pre>";*/
-
 
 		include('php/csv.class.php');
 	
@@ -230,9 +223,7 @@ class View {
 		}
 		
 		// Restitution du fichier
-		$csv->output($nomCal."csv");
-
-		//include("php/views/csv.phtml");
+		$csv->output($nomCal);
 	}
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
