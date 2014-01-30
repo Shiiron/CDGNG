@@ -220,7 +220,7 @@ class View {
 		
 	}
 	
-	/*function exportTableauCDG(){
+	function exportTableauCDG(){
 		if($_POST["action"] == "tableauAction") {
 			$tab = $this->model->getTabAction();
 			$nomCal = "actions";
@@ -228,13 +228,8 @@ class View {
 			$tab = $this->model->getTabModalite();
 			$nomCal = "modalites";
 		}
-		
-		/*echo "<pre>";
-			print_r($tab);
-		echo "</pre>";*/
 
-
-	/*	include('php/csv.class.php');
+		include('php/csv.class.php');
 	
 		// Création d'une instance de la classe FichierExcel
 		$csv = new CSV();
@@ -251,7 +246,7 @@ class View {
 		$csv->output($nomCal."csv");
 
 		//include("php/views/csv.phtml");
-	}*/
+	}/**/
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
 	function nomCal($cal_path){

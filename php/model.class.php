@@ -5,6 +5,7 @@ require("php/event.class.php");
 /**
  * Class Model
  *
+ * @author Loris Puech
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
  * 
  * @version GIT: $Id$

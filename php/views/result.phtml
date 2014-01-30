@@ -25,6 +25,11 @@
 		}
 		?>
 	</select>
+	<select name="export" class="hidden">
+		<?php
+			print('<option selected name="export" value="Total">Total</option>');
+		?>
+	</select>
 	<input name="startDate" class ="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime($ts_start))); ?>" />
 	<input name="endDate" class="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime_EndDate($ts_end))); ?>" />
 
