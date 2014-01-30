@@ -23,7 +23,8 @@
 			if(isset($_POST["ics"]))
 				$view->showCsv($_POST["ics"],
 	                           $_POST["startDate"],
-	                           $_POST["endDate"]);
+	                           $_POST["endDate"],
+	                           $_POST["export"]);
 			else
 				print ("Aucun fichier n'a été sélectionné");
 			break;

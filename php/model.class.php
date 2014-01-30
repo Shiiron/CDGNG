@@ -1,36 +1,48 @@
 <?php
-
 require("php/ical.class.php");
 
+/**
+ * Class Model
+ *
+ * @author Florestan Bredow <florestan.bredow@daiko.fr>
+ * 
+ * @version GIT: $Id$
+ */
 class Model {
 
 	private $config;
 	public $actions;
 	public $modalites;
-	public $total;
 	public $tabError;
 	public $tabAction;
 	public $tabModalite;
 
-	/**********************************************************************
-	 * constructeur
-	 **********************************************************************/
 
+	public $perDay;
+
+	public $tab_days;
+	public $tab_bad_events;
+
+	/**
+	 * Constructeur
+	 * 
+	 * @param string $config_path Path to config file
+	 */
 	function __construct($config_path) {
 		include_once($config_path);
 
 		$this->actions = array();
 		$this->modalites = array();
-		$this->total = 0;
 		$this->tabError = array();
 		include ('php/data/actions.php');
 		include ('php/data/modalites.php');
 	}
 
-	/**********************************************************************
-	 * Permet de charger la liste des calendriers disponibles.
-	 **********************************************************************/
-
+	/**
+	 * Load calendars list
+	 * 
+	 * @return array Calendars list
+	 */
 	function getCalList() {
 
 		$result = array();
@@ -54,154 +66,235 @@ class Model {
 		return $result;
 	}
 
-	/*********************************************************************
-	 * Transforme une date en timestamp
-	 *********************************************************************/
-
+	/**
+	 * Make timestamp from date string (start of day)
+	 * 
+	 * @param string $str date as string
+	 * 
+	 * @return int timestamp
+	 */
 	function strToTime($str) {
 		$tab = explode("-", $str, 3);
 		return strtotime($tab[2] . "-" . $tab[1] . "-" . $tab[0]);
 	}
 
+	/**
+	 * Make timestamp from date string (End of day)
+	 * 
+	 * @param string $str date as string 
+	 * 
+	 * @return int timestamp
+	 */
 	function strToTime_EndDate($str) {
 		$tab = explode("-", $str, 3);
 		$time = mktime(23, 59, 59, $tab[1], $tab[0], $tab[2]);
 		return $time;
 	}
 
-	/*********************************************************************
-	 * Parse un calendrier et retourne ses stats.
-	 *********************************************************************/
+	/**
+	 * Return code from event summarize
+	 * 
+	 * @param array $event Event 
+	 * 
+	 * @return array {"modalité", "action"}
+	 */
+	private function getEventCode($event){
+		
+		$output = array();
 
-	function parseCal($cal_path, $ts_start, $ts_end) {
-		//Résultat final a retouner.
-		//$this->results = array();
+		if(!preg_match(	
+			'#\[(?<code>[0-9]+[A-z])\]#', $event["SUMMARY"], $tab_matches)) {
+			return false;
+		}
+
+		$code = strtoupper($tab_matches['code']);
+
+		//Unification de la syntaxe ( 4 charactères )
+		if (strlen($code) == 2) {
+			$code = "00" . $code;
+		} else if (strlen($code) == 3) {
+			$code = "0" . $code;
+		}
+
+		$output["mod"] = substr($code, -1);
+		$output["act"] = substr($code,  0, -1);
+
+		return $output;
+	}
+
+	/**
+	 * Parse calendar and calculate code duration per day.
+	 * 
+	 * @param string $cal_path Path to calendar file
+	 * @param int    $ts_start 
+	 */
+
+	private function parseCal($cal_path, $ts_start, $ts_end) {
 		$ical = new ical();
 		$ical->parse($cal_path);
 
-		//Ne conserve que les dates dans l'intervalle de temps.
-		$tab_event = array();
+		$tab_events = array();
 
-		foreach ($ical->get_sort_event_list() as $events) {
+		// Parcours l'ensemble des événements
+		foreach ($ical->get_sort_event_list() as $event) {
 
-			// Gestion des DTXXX qui ne sont pas des tableaux
-			// Dans les calendriers édités avec google ce ne sont pas des tableaux
-			// Alors que dans ceux avec thunderbird c'est le cas.
-			// --> On met tout le monde d'accord avec des tableaux...
+			$event = $this->cleanEvent($event);
 
-			if (!is_array($events["DTSTART"])) {
-				//$ts = $events["DTSTART"];
-				$events["DTSTART"] = array(
-					"unixtime" => $events["DTSTART"],
-					"TZID" => "Europe/Paris",);
-			}
+			// L'évènement est dans le créneau choisi
+			if (($event["DTSTART"]["unixtime"] >= $ts_start)
+				&& ($event["DTEND"]["unixtime"] <= $ts_end)) {
+				
+				if($this->isEventValid($event, $tab_events)){
 
-			// Bug du calendrier, dis bug de Corinne,
-			// Champione toute catégorie confondu de l'evenement sans fin.
-			if (isset($events["DTEND"])) {
-				if (!is_array($events["DTEND"])) {
-					//$ts = $events["DTEND"];
-					$events["DTEND"] = array(
-						"unixtime" => $events["DTEND"],
-						"TZID" => "Europe/Paris",);
-				}
-
-				// Fin des gestions des tableaux
-
-				if (($events["DTSTART"]["unixtime"] >= $ts_start)
-						&& ($events["DTEND"]["unixtime"] <= $ts_end)) {
-					//Vérification des évènement qui se chevauchent
-					foreach ($tab_event as $key => $value) {
-						//Evenement se chevauchent
-						if(  !(($value["DTEND"]["unixtime"]  <= $events["DTSTART"]["unixtime"])
-							|| ($events["DTEND"]["unixtime"] <= $value["DTSTART"]["unixtime"]))){
-							if(((preg_match('#\[(?<code>[0-9]+[A-z])\]#', $events["SUMMARY"]))
-								&& (preg_match('#\[(?<code>[0-9]+[A-z])\]#', $value["SUMMARY"])))){
-								$this->addToError(2,
-													$events["SUMMARY"]."et".$value["SUMMARY"],
-													"se superposent",
-													$events["DTEND"]["unixtime"],
-													$events["DTEND"]["unixtime"]
-												);
-							}
-						}
-					}
-					array_push($tab_event, $events);
-				}
-			}
-		}
-
-		foreach ($tab_event as $event) {
-
-			//Ignore event without SUMMARY
-			if(!isset($event["SUMMARY"]))
-				continue;
-
-			// Test si l'évènement est récursif
-			// Et si il l'est, le mettre dans le log des erreurs
-			if (array_key_exists("RRULE", $event)) {
-				$this->addToError(2,
-									$event["SUMMARY"],
-									"Évènement récursif",
-									$event["DTSTART"]["unixtime"],
-									$event["DTEND"]["unixtime"]
-								);
-			}
-
-			//cherche le code type [AAAM]
-			else if (preg_match('#\[(?<code>[0-9]+[A-z])\]#', $event["SUMMARY"], $tab_matches)) {
-
-				$code = strtoupper($tab_matches['code']);
-
-				//Unification de la syntaxe ( 4 charactères )
-				if (strlen($code) == 2) {
-					$code = "00" . $code;
-				} else if (strlen($code) == 3) {
-					$code = "0" . $code;
-				}
-
-				$event_duration = $event["DTEND"]["unixtime"]
-						- $event["DTSTART"]["unixtime"];
-
-				// Si l'événement dure + de 12h on met une erreur
-				if ($event_duration >= 43200) {
-					$this->addToError(1,
-									$event["SUMMARY"],
-									"Évènement trop long (+ de 12h)",
-									$event["DTSTART"]["unixtime"],
-									$event["DTEND"]["unixtime"]
-									);
-				} else {
-
-					$modalite = substr($code, -1);
-					$action = substr($code, 0, -1);
+					array_push($tab_events, $event);
 					
-					// Permet l'ajout du code et de la modalites dans un tableau pour le traitement dans la vue
-					$this->addCode($action, $modalite, $event_duration, $this->actions, $this->tabAction, $event);
-					$this->addCode($modalite, $action, $event_duration, $this->modalites, $this->tabModalite, $event);
+					$code = $this->getEventCode($event);
+					$event_duration = $event["DTEND"]["unixtime"]
+									- $event["DTSTART"]["unixtime"];
+					
+					// Permet l'ajout du code et de la modalites 
+					// dans un tableau pour le traitement dans la vue
+					$this->addCode(
+						$code["act"], 
+						$code["mod"], 
+						$event_duration, 
+						$this->actions, 
+						$this->tabAction, 
+						$event
+					);
+
+					$this->addCode(
+						$code["mod"], 
+						$code["act"], 
+						$event_duration, 
+						$this->modalites, 
+						$this->tabModalite, 
+						$event
+					);
 
 					$this->total += $event_duration;
 				}
-			} 
-			else {
-				$this->addToError(0,
-								$event["SUMMARY"],
-								"Pas de code",
-								$event["DTSTART"]["unixtime"],
-								$event["DTEND"]["unixtime"]
-								);
 			}
 		}
-	
+	}
+
+
+	/**
+	 * Uniformise la forme des évènements.
+	 */
+	private function cleanEvent($event){
+
+		// Gestion des DTXXX qui ne sont pas des tableaux
+		// Dans les calendriers édités avec google ce ne sont pas des tableaux
+		// Alors que dans ceux avec thunderbird c'est le cas.
+		// --> On met tout le monde d'accord avec des tableaux...
+
+		if (!is_array($event["DTSTART"])) {
+			$event["DTSTART"] = array(
+				"unixtime" 	=> $event["DTSTART"],
+				"TZID" 		=> "Europe/Paris",);
+		}
+
+		// Certains évènement n'ont pas de fin.
+		if (isset($event["DTEND"])) {
+			if (!is_array($event["DTEND"])) {
+				//$ts = $events["DTEND"];
+				$event["DTEND"] = array(
+					"unixtime" 	=> $event["DTEND"],
+					"TZID" 		=> "Europe/Paris",);
+			}
+		}
+
+		return $event;
+	}
+
+	/**
+	 * check if an event is valid
+	 * 
+	 * @param array $event event to check
+	 * @param array $tab_events array of events already tested.
+	 * 
+	 * @todo ignore "on day" events
+	 * 
+	 */
+	private function isEventValid($event, $tab_events){
+		
+		// Event without end
+		if (!isset($event["DTEND"]))
+			return false; //Ignored
+
+		// Event without summary
+		if(!isset($event["SUMMARY"]))
+			return false; //Ignored
+
+		// Recurcive event
+		if (array_key_exists("RRULE", $event)) {
+			$this->addToError(2, $event, "Récursif");
+			return false;
+		}
+
+		$code = $this->getEventCode($event);
+
+		// Uncoded event
+		if ($code == false) {
+			$this->addToError(0, $event, "Pas de code");
+			return false;
+		}
+
+		// bad code
+		if (!array_key_exists($code["mod"], $this->tabModalite)) {
+			$this->addToError(2, $event, "Mauvais code (modalité)");
+			return false;
+		}
+
+		// bad code
+		if (!array_key_exists($code["act"], $this->tabAction)) {
+			$this->addToError(2, $event, "Mauvais code (action)");
+			return false;
+		}
+
+		// Event longer then 12 hours
+		if ($event["DTEND"]["unixtime"] - $event["DTSTART"]["unixtime"] >= 43200) {
+			$this->addToError(1, $event, "Trop long (+ de 12h)");
+			return false;
+		}
+
+		// Superposed event.
+		foreach ($tab_events as $key => $event2) {
+			//Evenement se chevauchent
+			if( !( ($event2["DTEND"]["unixtime"] 
+					<= $event["DTSTART"]["unixtime"])
+				|| ($event["DTEND"]["unixtime"]  
+					<= $event2["DTSTART"]["unixtime"])
+				 )){
+				
+				$this->addToError(2, $event, 
+								  "se superpose à ".$event2["SUMMARY"]);
+				return false;
+			}
+		}
+
+		// Everything go right.
 		return true;
 	}
 
-	protected function addCode($code, $subcode, $event_duration, &$tab, $list_codes, $event){
+
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+	/*private function addCode($code, $ts_start, $ts_end) {
+
+
+	}/**/
+
+	private function addCode($code, $subcode, $event_duration, &$tab, $list_codes, $event){
 		// Ajoute un code dans le tableau qui va bien
 		if (!array_key_exists($code, $list_codes)) {
 			$this->addToError(2,
 							$event["SUMMARY"],
-							"Code mal écrit",
+							"Code mal écrit : ".$code,
 							$event["DTSTART"]["unixtime"], 
 							$event["DTEND"]["unixtime"]);
 		} else {
@@ -228,6 +321,13 @@ class Model {
 
 	}
 
+	/**
+	 * Analyse one or more calendars
+	 * 
+	 * @param string $cal_path Path to calendar
+	 * @param int    $ts_start Start of event timestamp
+	 * @param int 	 $ts_end   End of event timestamp 
+	 */
 	function analyseCal($cal_path, $ts_start, $ts_end) {
 
 		//Reset tab
@@ -235,7 +335,6 @@ class Model {
 		$this->modalites = array();
 		$this->total = 0;
 		$this->tabError = array();
-
 
 		$ts_start = $this->strToTime($ts_start);
 		$ts_end = $this->strToTime_EndDate($ts_end);
@@ -246,6 +345,11 @@ class Model {
 		}
 	}
 
+	/**
+	 * read calendar name from calendar file
+	 * 
+	 * @param string $cal_path Path to calendar file
+	 */
 	function get_cal_name($cal_path) {
 		$ical = new ical();
 		$ical->parse($cal_path);
@@ -256,12 +360,14 @@ class Model {
 		}
 	}
 
-	function addToError($niveau, $summary, $text, $dateStart, $dateEnd) {
-		$this->tabError[] =array("niveau" => $niveau,
-									"summary" => $summary,
-									"texte" => $text,
-									"dateDebut" => date("d-m-Y H:i", $dateStart),
-									"dateFin" => date("H:i", $dateEnd));
+	function addToError($level, $event, $description) {
+		$this->tabError[] = array(
+			"LEVEL" 	  => $level,
+			"SUMMARY"	  => $event["SUMMARY"],
+			"DESCRIPTION" => $description,
+			"DTSTART" 	  => date("d-m-Y H:i", $event["DTSTART"]["unixtime"]),
+			"DTEND"		  => date("H:i", 	   $event["DTEND"]["unixtime"])
+		);
 	}
 	
 	function getTabError(){

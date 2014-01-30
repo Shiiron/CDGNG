@@ -37,16 +37,34 @@ class View {
 	/************************************************************************
 	 * Show result as CSV File
 	 ************************************************************************/
-	function showCsv($tab_cal, $ts_start, $ts_end) {
+	function showCsv($tab_cal, $ts_start, $ts_end, $export_type = "") {
 
 		$nomCal = $this->nomCal($tab_cal);
 
 		// File headers (this is not html)
-		header("Content-type: application/vnd.ms-excel");
+		//header("Content-type: application/vnd.ms-excel");
+		header("Content-type: text/csv");
 		header("Content-disposition: attachment; filename=$nomCal.csv");
 
-		print("\"Nom\";\"Actions\";\"Modalités\";\"Temps(min)\"");
+		switch ($export_type) {
+			case 'day':
+					$title = "\"Date\";";
+				break;
+			case 'week':
+					$title = "\"Semaine (Année)\";";
+				break;
+			
+			case 'month':
+					$title = "\"mois (Année)\";";
+				break;
 
+			default:
+					$title = "";
+				break;
+		}
+		print("\"Nom\";".$title."\"Actions\";\"Modalités\";\"Temps(min)\"");
+
+		// Traitement des différents calendriers
 		foreach ($tab_cal as $key => $cal) {
 			$this->model->analyseCal(array($cal), $ts_start, $ts_end);
 			$tab_results = $this->model->getActions();
@@ -202,7 +220,7 @@ class View {
 		
 	}
 	
-	function exportTableauCDG(){
+	/*function exportTableauCDG(){
 		if($_POST["action"] == "tableauAction") {
 			$tab = $this->model->getTabAction();
 			$nomCal = "actions";
@@ -216,7 +234,7 @@ class View {
 		echo "</pre>";*/
 
 
-		include('php/csv.class.php');
+	/*	include('php/csv.class.php');
 	
 		// Création d'une instance de la classe FichierExcel
 		$csv = new CSV();
@@ -233,7 +251,7 @@ class View {
 		$csv->output($nomCal."csv");
 
 		//include("php/views/csv.phtml");
-	}
+	}*/
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
 	function nomCal($cal_path){
@@ -248,6 +266,29 @@ class View {
 		$nomCal .= $tab_NomCal[1]."+";
 		}
 		return substr($nomCal, 0, -1);
+	}
+
+
+	/*function array2html($array){
+		$output = "";
+		foreach ($array as $row_number => $row) {
+			foreach ($row as $column_number => $cell) {
+				# code...
+			}
+		}
+
+	}*/
+
+	function array2csv($array){
+		$output = "";
+		foreach ($array as $row_number => $row) {
+			foreach ($row as $column_number => $cell) {
+				$output .= "\"".$cell."\"";
+			}
+		}
+		$output .= "\n";
+
+		return $output;
 	}
 }
 	
