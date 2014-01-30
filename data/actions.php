@@ -1,6 +1,6 @@
 <?php
 // Tableau des actions du cdg
-$this->codes['actions'] = array(
+$GLOBALS['actions'] = array(
 	'001' => array(
 		'Intitulé' 	=> "Instances de SupAgro",
 		'Description' 	=> "Uniquement si aucun lien avec une action - Ne pas utiliser par défaut!"),

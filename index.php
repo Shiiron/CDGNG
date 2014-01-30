@@ -1,6 +1,10 @@
 <?php
-	include("./php/model.class.php");
-	include("./php/view.class.php");
+	include "./php/model.class.php";
+	include "./php/view.class.php";
+	include "./data/actions.php";
+	include "./data/modalites.php";
+
+	$_ = array();
 
 	$model = new Model("./config.php");
 	$view = new View($model);

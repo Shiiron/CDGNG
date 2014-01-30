@@ -77,7 +77,7 @@ class Event {
 	 * 
 	 * @return true or false.
 	 */
-	function isValid($events, $codes, &$error){
+	function isValid($events, &$error){
 
 		// Event without end
 		if (!isset($this->e["DTEND"])){
@@ -106,13 +106,13 @@ class Event {
 		}
 
 		// bad code
-		if (!array_key_exists($code["mod"], $codes['modalites'])) {
+		if (!array_key_exists($code["mod"], $GLOBALS['modalites'])) {
 			$error = array(2, "Mauvais code (modalité).");
 			return false;
 		}
 
 		// bad code
-		if (!array_key_exists($code["act"], $codes['actions'])) {
+		if (!array_key_exists($code["act"], $GLOBALS['actions'])) {
 			$this->addToError(2, $event, "Mauvais code (action).");
 			return false;
 		}
@@ -149,7 +149,11 @@ class Event {
 		return false;
 	}
 
-	
+	/**
+	 * Return Code of event
+	 * 
+	 * @return array {"modalite" => "X", "action" => "ZZZ"}
+	 */
 	function getCode(){
 
 		if(!preg_match(	
@@ -199,6 +203,28 @@ class Event {
 	 *
 	 */
 	function cutByDay(){
+
+		$output = array();
+
+		//definir le TS du jour 1
+		$curDate = $this->getStart();
+		while($curDate < $this->getEnd()){
+			$t = getdate($curDate);
+			$dayStart = mktime(0, 0, 0, $t["mon"], $t["mday"], $t["year"]);
+			$dayEnd = mktime(23, 59, 59, $t["mon"], $t["mday"], $t["year"]);
+
+			// Event end after end of day.
+			if($dayEnd < $this->getEnd()){
+				$output[$dayStart] = $dayEnd - $curDate;
+			} else {
+				$output[$dayStart] = $this->getEnd() - $curDate;
+			}
+			$curDate = mktime(0, 0, 0, $t["mon"], $t["mday"] + 1, $t["year"]);; // one more day;
+		}
+
+		$this->getStart();
+
+		return $output;
 
 	}
 

@@ -1,5 +1,8 @@
 <?php
 
+require('php/csv.class.php');
+
+
 class View {
 
 	private $model;
@@ -229,23 +232,14 @@ class View {
 			$nomCal = "modalites";
 		}
 
-		include('php/csv.class.php');
-	
-		// Création d'une instance de la classe FichierExcel
 		$csv = new CSV();
 		
-		// Initialisation des différentes colonnes
 		$csv->Insertion("\"Code\";\"Intitulé\";\"Description\"");
-
-		// Insertion des données
+		
 		foreach($tab as $code => $tab_code){
 			$csv->Insertion('"'.$code.'";"'.$tab_code["Intitulé"].'";"'.$tab_code["Description"].'"');
 		}
-		
-		// Restitution du fichier
 		$csv->output($nomCal."csv");
-
-		//include("php/views/csv.phtml");
 	}/**/
 	
 	// Fonction qui permet d'obtenir le nom du calendrier
@@ -261,29 +255,6 @@ class View {
 		$nomCal .= $tab_NomCal[1]."+";
 		}
 		return substr($nomCal, 0, -1);
-	}
-
-
-	/*function array2html($array){
-		$output = "";
-		foreach ($array as $row_number => $row) {
-			foreach ($row as $column_number => $cell) {
-				# code...
-			}
-		}
-
-	}*/
-
-	function array2csv($array){
-		$output = "";
-		foreach ($array as $row_number => $row) {
-			foreach ($row as $column_number => $cell) {
-				$output .= "\"".$cell."\"";
-			}
-		}
-		$output .= "\n";
-
-		return $output;
 	}
 }
 	
