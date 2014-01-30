@@ -1,5 +1,6 @@
 <?php
 require("php/ical.class.php");
+require("php/event.class.php");
 
 /**
  * Class Model
@@ -14,14 +15,7 @@ class Model {
 	public $actions;
 	public $modalites;
 	public $tabError;
-	public $tabAction;
-	public $tabModalite;
-
-
-	public $perDay;
-
-	public $tab_days;
-	public $tab_bad_events;
+	public $codes;
 
 	/**
 	 * Constructeur
@@ -34,8 +28,9 @@ class Model {
 		$this->actions = array();
 		$this->modalites = array();
 		$this->tabError = array();
-		include ('php/data/actions.php');
-		include ('php/data/modalites.php');
+		$this->codes = array();
+		include ('data/actions.php');
+		include ('data/modalites.php');
 	}
 
 	/**
@@ -136,158 +131,47 @@ class Model {
 		$tab_events = array();
 
 		// Parcours l'ensemble des événements
-		foreach ($ical->get_sort_event_list() as $event) {
-
-			$event = $this->cleanEvent($event);
+		foreach ($ical->get_sort_event_list() as $event_desc) {
+			
+			$event = new Event($event_desc);
 
 			// L'évènement est dans le créneau choisi
-			if (($event["DTSTART"]["unixtime"] >= $ts_start)
-				&& ($event["DTEND"]["unixtime"] <= $ts_end)) {
+			if (($event->getStart() >= $ts_start)
+				&& ($event->getEnd() <= $ts_end)) {
 				
-				if($this->isEventValid($event, $tab_events)){
+				if($event->isValid($tab_events, $this->codes, $error)){
 
 					array_push($tab_events, $event);
 					
-					$code = $this->getEventCode($event);
-					$event_duration = $event["DTEND"]["unixtime"]
-									- $event["DTSTART"]["unixtime"];
+					$code = $event->getCode();
 					
 					// Permet l'ajout du code et de la modalites 
 					// dans un tableau pour le traitement dans la vue
 					$this->addCode(
 						$code["act"], 
 						$code["mod"], 
-						$event_duration, 
+						$event->getLength(), 
 						$this->actions, 
-						$this->tabAction, 
+						$this->codes['actions'], 
 						$event
 					);
 
 					$this->addCode(
 						$code["mod"], 
 						$code["act"], 
-						$event_duration, 
+						$event->getLength(), 
 						$this->modalites, 
-						$this->tabModalite, 
+						$this->codes['modalites'], 
 						$event
 					);
 
-					$this->total += $event_duration;
+					$this->total += $event->getLength();
+				} else {
+					$this->addToError($error[0], $event, $error[1]);
 				}
 			}
 		}
 	}
-
-
-	/**
-	 * Uniformise la forme des évènements.
-	 */
-	private function cleanEvent($event){
-
-		// Gestion des DTXXX qui ne sont pas des tableaux
-		// Dans les calendriers édités avec google ce ne sont pas des tableaux
-		// Alors que dans ceux avec thunderbird c'est le cas.
-		// --> On met tout le monde d'accord avec des tableaux...
-
-		if (!is_array($event["DTSTART"])) {
-			$event["DTSTART"] = array(
-				"unixtime" 	=> $event["DTSTART"],
-				"TZID" 		=> "Europe/Paris",);
-		}
-
-		// Certains évènement n'ont pas de fin.
-		if (isset($event["DTEND"])) {
-			if (!is_array($event["DTEND"])) {
-				//$ts = $events["DTEND"];
-				$event["DTEND"] = array(
-					"unixtime" 	=> $event["DTEND"],
-					"TZID" 		=> "Europe/Paris",);
-			}
-		}
-
-		return $event;
-	}
-
-	/**
-	 * check if an event is valid
-	 * 
-	 * @param array $event event to check
-	 * @param array $tab_events array of events already tested.
-	 * 
-	 * @todo ignore "on day" events
-	 * 
-	 */
-	private function isEventValid($event, $tab_events){
-		
-		// Event without end
-		if (!isset($event["DTEND"]))
-			return false; //Ignored
-
-		// Event without summary
-		if(!isset($event["SUMMARY"]))
-			return false; //Ignored
-
-		// Recurcive event
-		if (array_key_exists("RRULE", $event)) {
-			$this->addToError(2, $event, "Récursif");
-			return false;
-		}
-
-		$code = $this->getEventCode($event);
-
-		// Uncoded event
-		if ($code == false) {
-			$this->addToError(0, $event, "Pas de code");
-			return false;
-		}
-
-		// bad code
-		if (!array_key_exists($code["mod"], $this->tabModalite)) {
-			$this->addToError(2, $event, "Mauvais code (modalité)");
-			return false;
-		}
-
-		// bad code
-		if (!array_key_exists($code["act"], $this->tabAction)) {
-			$this->addToError(2, $event, "Mauvais code (action)");
-			return false;
-		}
-
-		// Event longer then 12 hours
-		if ($event["DTEND"]["unixtime"] - $event["DTSTART"]["unixtime"] >= 43200) {
-			$this->addToError(1, $event, "Trop long (+ de 12h)");
-			return false;
-		}
-
-		// Superposed event.
-		foreach ($tab_events as $key => $event2) {
-			//Evenement se chevauchent
-			if( !( ($event2["DTEND"]["unixtime"] 
-					<= $event["DTSTART"]["unixtime"])
-				|| ($event["DTEND"]["unixtime"]  
-					<= $event2["DTSTART"]["unixtime"])
-				 )){
-				
-				$this->addToError(2, $event, 
-								  "se superpose à ".$event2["SUMMARY"]);
-				return false;
-			}
-		}
-
-		// Everything go right.
-		return true;
-	}
-
-
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	/*private function addCode($code, $ts_start, $ts_end) {
-
-
-	}/**/
 
 	private function addCode($code, $subcode, $event_duration, &$tab, $list_codes, $event){
 		// Ajoute un code dans le tableau qui va bien
@@ -363,10 +247,10 @@ class Model {
 	function addToError($level, $event, $description) {
 		$this->tabError[] = array(
 			"LEVEL" 	  => $level,
-			"SUMMARY"	  => $event["SUMMARY"],
+			"SUMMARY"	  => $event->getSummary(),
 			"DESCRIPTION" => $description,
-			"DTSTART" 	  => date("d-m-Y H:i", $event["DTSTART"]["unixtime"]),
-			"DTEND"		  => date("H:i", 	   $event["DTEND"]["unixtime"])
+			"DTSTART" 	  => date("d-m-Y H:i", $event->getStart()),
+			"DTEND"		  => date("H:i", 	   $event->getEnd())
 		);
 	}
 	
@@ -387,11 +271,11 @@ class Model {
 	}
 	
 	function getTabAction(){
-		return $this->tabAction;
+		return $this->codes['actions'];
 	}
 	
 	function getTabModalite(){
-		return $this->tabModalite;
+		return $this->codes['modalites'];
 	}
 }
 
