@@ -1,6 +1,6 @@
 <?php
 // Tableau modalite cdg
-$this->tabModalite = array(
+$GLOBALS['modalites'] = array(
 	"A" => array(
 		"Intitulé" => "Réunions",
 		"Description" => ""),
