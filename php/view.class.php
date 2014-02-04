@@ -2,7 +2,14 @@
 
 require('php/csv.class.php');
 
-
+/**
+ * Class View
+ * 
+ * @author Loris Puech
+ * @author Florestan Bredow <florestan.bredow@daiko.fr>
+ * 
+ * @version GIT: $Id$
+ */
 class View {
 
 	private $model;
@@ -19,28 +26,26 @@ class View {
 	 ************************************************************************/
 	function showForm() {
 		include("php/views/form.phtml");
-		include("php/views/footer.phtml");
 	}
 
 	/************************************************************************
 	 * Show Result as HTML
 	 ************************************************************************/
-	function showResults($cal_path, $ts_start, $ts_end) {
+	function showResults($cal_path, $ts_start, $ts_end, $slotTime = "All") {
 		if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
 			list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
-		
-		include("php/views/header.phtml");
+			
 		$this->model->analyseCal($cal_path, $ts_start, $ts_end);
 		$total = $this->model->getTotal();
-		$tabError = $this->model->getTabError();
+		$errors = $this->model->getErrors();
+	
 		include("php/views/result.phtml");
-		include("php/views/footer.phtml");
 	}
 
 	/************************************************************************
 	 * Show result as CSV File
 	 ************************************************************************/
-	function showCsv($tab_cal, $ts_start, $ts_end, $export_type = "") {
+	/*function showCsv($tab_cal, $ts_start, $ts_end, $export_type = "") {
 
 		$nomCal = $this->nomCal($tab_cal);
 
@@ -82,153 +87,134 @@ class View {
 			}
 			
 		}
-	}
+	}/**/
 
-	private function printTab($tab){
-		foreach($tab as $code => $content){
-			
-			$hour = floor($content["total"] / 3600);
-			$minute = ($content["total"] % 3600) / 60;
-			
-			if (array_key_exists($code, $this->model->getTabAction())){
-				$tabAction = $this->model->getTabAction();
-				$title = $tabAction[$code]['Intitulé'];
-				
-			}
-			else{
-				$tabModalite = $this->getTabModalite();
-				$title = $tabModalite[$code]['Intitulé'];
-			}
-			
-			print($title." (".$code.") : ".$hour."h ");
-			
-			if($minute > 0) print($minute."m ");
-			print(" (".round(($content["total"]*100)/$this->model->getTotal(),2)."%)");
-		
-			print("<ul>");
-			foreach($content as $subcode => $subcontent) {
-				if($subcode != "total") {
-					$hour = floor($content[$subcode] / 3600);
-					$reste = $content[$subcode] % 3600;
-					$minute = $reste / 60;
+	/**
+	 * print data by period in a certain order
+	 * 
+	 * @param string $type show result per actions or per modalites
+	 * @param string $slot define slot time : day, week, year, month, All
+	 */
+	private function printCalendar($type = "actions", $slot = "All"){
+		$data = $this->model->getData($slot);
 
-					if (array_key_exists($subcode, $this->model->getTabAction())){
-						$tabAction = $this->model->getTabAction();
-						$subtitle = $tabAction[$subcode]['Intitulé'];
+		if($type == "actions") {
+			$t = 'actions';
+			$t2 = 'modalites';
+		} else {
+			$t = 'modalites';
+			$t2 = 'actions';
+		}
+		//Parcours les calendriers
+		foreach ($data as $calName => $calData) {
+			print("<h3>"."$calName (".($calData['duration']/3600)."h) </h3>");
+			//Parcours les périodes (jours, semaines, mois, années)
+			foreach ($calData as $slotName => $slotData) {
+				if($slotName == 'duration') continue;
+				print("<h4>"."$slotName (".($slotData['duration']/3600)."h)</h4>");
+
+				//Parcours les codes (actions)
+				foreach ($slotData[$t] as $code => $subData) {
+					if($code == 'duration') continue;
+					print($code ." : ".$GLOBALS[$t][$code]['Intitulé']
+								." (".($subData['duration']/3600)."h)\n");
+					print("<ul>");
+					//Parcours les souscodes (modalités)
+					foreach ($subData as $subCode => $duration) {
+						if($subCode == 'duration') continue;
+						print("<li>".$subCode." : "
+							.$GLOBALS[$t2][$subCode]['Intitulé']." ("
+							.($duration/3600)."h) </li>\n");
 					}
-					else{
-						$tabModalite = $this->model->getTabModalite();
-						$subtitle = $tabModalite[$subcode]['Intitulé'];
-					}
-					
-					print("<li>".$subtitle." (".$subcode.")"." : ".$hour."h ");
-					
-					if($minute > 0) 
-						print($minute."m ");
-					print("</li>");
+					print("</ul>");
 				}
 			}
-			print("</ul>");
 		}
 	}
 
-
-	//Fonction qui permet d'obtenir un tableau trier par ordre décroissant
-	private function printTabDesc($tab) {
-
-		while (!empty($tab)){
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	function showCsv($paths, $ts_start, $ts_end, $slot = "All") {
+		if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
+			list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
 			
-			$code = "";
+		$this->model->analyseCal($paths, $ts_start, $ts_end);
 
-			//Cherche la clé restante avec le total le plus grand 
-			foreach ($tab as $key => $value) {
-				if($code == "")
-					$code = $key;
+		$nomCal = $this->model->getName();
 
-				if($tab[$code]["total"] < $value["total"])
-					$code = $key;
-			}
+		$data = $this->model->getData($slot);
 
-			$hour = floor($tab[$code]["total"] / 3600);
-			$minute = ($tab[$code]["total"] % 3600) / 60;
-			
-			if (array_key_exists($code, $this->model->getTabAction())){
-				$tabAction = $this->model->getTabAction();
-				$title = $tabAction[$code]['Intitulé'];
-			}
-			else{
-				$tabModalite = $this->model->getTabModalite();
-				$title = $tabModalite[$code]['Intitulé'];
-			}
+		// File headers (this is not html)
+		header("Content-type: text/csv");
+		header("Content-disposition: attachment; filename=$nomCal.csv");
 
-			print($title." (".$code.") : ".$hour."h ");
-			
-			if($minute > 0) print($minute."m ");
-			print(" (".round(($tab[$code]["total"]*100)/$this->model->getTotal(),2)."%)");
-	
-			print("<ul>");
-			
-
-			while(!empty($tab[$code]['subcode'])){
-				$subcode = "";
-								
-				//Cherche la clé restante avec le total le plus grand 
-				foreach ($tab[$code]['subcode'] as $key2 => $value2) {
-					if($subcode == "")
-						$subcode = $key2;
-
-					if($tab[$code]['subcode'][$subcode] <= $value2)
-						$subcode = $key2;
-				}
-							
-				
-				if($subcode != "total") {
-					$hour = floor($tab[$code]['subcode'][$subcode] / 3600);
-					$reste = $tab[$code]['subcode'][$subcode] % 3600;
-					$minute = $reste / 60;
-
-					if (array_key_exists($subcode, $this->model->getTabAction())){
-						$tabAction = $this->model->getTabAction();
-						$subtitle = $tabAction[$subcode]['Intitulé'];
-					}
-					else{
-						$tabModalite = $this->model->getTabModalite();
-						$subtitle = $tabModalite[$subcode]['Intitulé'];
-					}
-					print("<li>".$subtitle." (".$subcode.")"." : ".$hour."h ");
-					
-					if($minute > 0) 
-						print($minute."m ");
-					print("</li>");
-				}
-
-				unset($tab[$code]['subcode'][$subcode]);
-				
-			}
-
-			print("</ul>");
-
-			// Supprime la ligne déjà traité
-			unset($tab[$code]);
+		switch ($slot) {
+			case 'day': 	$title = "\"Date (YYYY/MM/DD)\";"; 	break;
+			case 'week': 	$title = "\"Semaine (YYYY/SS)\";"; 	break;
+			case 'month': 	$title = "\"Mois (YYYY/MM)\";"; 	break;
+			case 'year': 	$title = "\"Année\";";				break;
+			default:		$title = "";						break;
 		}
+
+		// Headers
+		$header = "\"Nom\";";
+		if ($title != "") 
+			$header .= $title.";";
+		$header .= "\"Actions\";\"Modalités\";\"Temps(Heures)\"\n";
+		print($header);
+
+		foreach ($data as $calName => $calData) {
+			foreach ($calData as $slotName => $slotData) {
+				if($slotName == 'duration') continue;
+				//Parcours les codes (actions)
+				foreach ($slotData['actions'] as $code => $subData) {
+					if($code == 'duration') continue;
+					//Parcours les souscodes (modalités)
+					foreach ($subData as $subCode => $duration) {
+						if($subCode == 'duration') continue;
+						$line = "\"".$calName."\";";
+						if($title != "") 
+							$line .= "\"".$slotName."\";";
+						$line .= "\"".$code."\";";
+						$line .= "\"".$subCode."\";";
+						$line .= "\"".$duration."\";\n";
+
+						print("$line");
+					}
+				}
+			}
+		}
+
 	}
-	
-	function printError(){
-		$errorTab = $this->model->getTabError();
-		
-		foreach ($errorTab as $key => $value){
-			include("php/views/error.phtml");
+
+	/**
+	 * Print error list using template
+	 * 
+	 * @param string $template template filename in /php/views/
+	 * 
+	 */
+	private function printError($template){
+		$errors = $this->model->getErrors();
+		foreach ($errors as $cal_name => $cal_errors) {
+			
+			foreach ($cal_errors as $key => $value){
+				include("php/views/".$template);
+			}
 		}
-		
 		
 	}
 	
 	function exportTableauCDG(){
 		if($_POST["action"] == "tableauAction") {
-			$tab = $this->model->getTabAction();
+			$tab = $GLOBALS['actions'];
 			$nomCal = "actions";
 		} else {
-			$tab = $this->model->getTabModalite();
+			$tab = $GLOBALS['modalites'];
 			$nomCal = "modalites";
 		}
 
@@ -242,19 +228,6 @@ class View {
 		$csv->output($nomCal."csv");
 	}/**/
 	
-	// Fonction qui permet d'obtenir le nom du calendrier
-	function nomCal($cal_path){
-		$nomCal = "";
-		foreach ($cal_path as $value) {
-		// Elimination de l'extension .ics
-		$tab_Explode = explode(".", $value);
-		$pathCal = $tab_Explode[0];
-
-		// Elimination du cal/ devant le nom du calendrier
-		$tab_NomCal = explode("/", $pathCal);
-		$nomCal .= $tab_NomCal[1]."+";
-		}
-		return substr($nomCal, 0, -1);
-	}
-}
 	
+}
+?>

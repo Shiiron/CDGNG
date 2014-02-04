@@ -1,3 +1,5 @@
-<li class="errorLvl<?php print($value["LEVEL"]);?>"><?php print($value["SUMMARY"]); ?> : <?php print($value["DTSTART"]."-".$value["DTEND"]);?> : <?php print($value["DESCRIPTION"]);?></li>
+<li class="errorLvl<?php print($value["LEVEL"]);?>">
+	<?=$cal_name?> : <?=$value["SUMMARY"]?> : <?php print($value["DTSTART"]."-".$value["DTEND"]);?> : <?=$value["DESCRIPTION"]?>
+</li>
 
 <!-- permet d'afficher les erreurs -->

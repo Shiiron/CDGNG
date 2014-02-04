@@ -105,34 +105,65 @@ class Model {
 		}
 	}
 	
-	function getTabError(){
-		return $this->tabError;
+	/**
+	 * Returns errors for all calendars
+	 * 
+	 * @return array All calendars errors
+	 */
+	function getErrors(){
+		$output = array();
+		foreach ($this->calendars as $name => $calendar) {	
+			$output[$calendar->getName()] = $calendar->getErrors();
+		}
+		return $output;
+	}
+
+	/**
+	 * Return calendar's data
+	 * 
+	 * @param string $type Result by action or by modalites (byAction, byModalite)
+	 * @param string $slot define time slot (day, week, month, year, all)
+	 * @param bool $fusion Définis si il faut fusionner les données des différents calendriers
+	 */
+
+	function getData($slot = "All", $fusion = false){
+		$output = array();
+		if(!$fusion){
+			foreach ($this->calendars as $name => $calendar) {	
+				$output[$calendar->getName()] = $calendar->getData($slot);
+				$output[$calendar->getName()]['duration'] = $calendar->getTotalLength();
+			}
+		} else {
+			//TODO : need addCal dans Calendar
+		}
+		return $output;
 	}
 	
-	function getActions(){
-		return $this->actions;
-	}
-	
-	function getModalites(){
-		return $this->modalites;
-	}
-	
+	/**
+	 * Calculate sum of duration of all valid events
+	 * 
+	 * @return int Duration of all valid events for all selected calendars 
+	 */
 	function getTotal(){
 		$total = 0;
 
-		foreach ($this->calendars as $name => $calendar) {
-			
+		foreach ($this->calendars as $name => $calendar) {	
 			$total += $calendar->getTotalLength();
 		}
 		return $total;
 	}
-	
-	function getTabAction(){
-		return $GLOBALS['actions'];
-	}
-	
-	function getTabModalite(){
-		return $GLOBALS['modalites'];
+
+	/**
+	 * Return name of selected calendars
+	 * 
+	 * @return string
+	 */
+	function GetName(){
+		$output = "";
+		foreach ($this->calendars as $name => $calendar) {	
+			$output .= $calendar->getName().", ";
+		}
+		return substr($output, 0, -2);
 	}
 }
 

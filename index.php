@@ -1,10 +1,19 @@
 <?php
+/**
+ * index file
+ * 
+ * @author Loris Puech
+ * @author Florestan Bredow <florestan.bredow@daiko.fr>
+ * 
+ * @version GIT: $Id$
+ *  
+ */
+
+
 	include "./php/model.class.php";
 	include "./php/view.class.php";
 	include "./data/actions.php";
 	include "./data/modalites.php";
-
-	$_ = array();
 
 	$model = new Model("./config.php");
 	$view = new View($model);
@@ -14,16 +23,17 @@
 		$action = $_POST["action"];
 
 	switch ($action) {
-		case "Montrer résultats":
+		case "Show":
 			if(isset($_POST["ics"]))
 				$view->showResults($_POST["ics"], 
 								   $_POST["startDate"], 
-								   $_POST["endDate"]);
+								   $_POST["endDate"],
+								   $_POST["export"]);
 			else
 				print ("Aucun fichier n'a été sélectionné");
 			break;
 
-		case "Exporter":
+		case "Export":
 			if(isset($_POST["ics"]))
 				$view->showCsv($_POST["ics"],
 	                           $_POST["startDate"],
@@ -42,7 +52,6 @@
 			break;
 
 		default:
-			include("php/views/header.phtml");
 			$view->showForm();
 			break;
 	}

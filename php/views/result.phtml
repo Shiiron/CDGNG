@@ -1,17 +1,29 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+    <head>
+
+        <meta charset="utf-8" />
+        <title>CDG : Analyseur de calendrier</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+		<link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/style.css">
+
+    </head>
+
+    <body>
+		<div class="container-fluid">
+
 <h2>
-	Calendriers : 
-	<?php
-		$nomCal = $this->nomCal($cal_path);
-		print(substr($nomCal, 0, -1));
-	?>
+	Calendriers : <?=$this->model->getName()?>
 </h2>
 
 <h3>
-	<?php print(date("d/m/Y", $this->model->strToTime($ts_start))); ?> 
-	au 
-	<?php print(date("d/m/Y", $this->model->strToTime_EndDate($ts_end)));
-
-	print(" (" . (floor($total) / 3600)); ?>h)
+	<?=date("d/m/Y", $this->model->strToTime($ts_start))?> au 
+	<?=date("d/m/Y", $this->model->strToTime_EndDate($ts_end))?>
+	<?=" (".(floor($total) / 3600)?>h)
 </h3> 
 
 <!-- Gestion de l'export sur la page de résultat -->
@@ -20,18 +32,15 @@
 
 	<select name="ics[]" multiple="multiple" class="hidden">
 		<?php
-		foreach ($cal_path as $value) {
-			print('<option selected name="ics" value="' . $value . '">' . $value . '</option>');
-		}
+		foreach ($cal_path as $value)
+			print('<option selected name="ics" value="'.$value.'">'.$value.'</option>');
 		?>
 	</select>
 	<select name="export" class="hidden">
-		<?php
-			print('<option selected name="export" value="Total">Total</option>');
-		?>
+		<option selected name="export" value="Total">Total</option>
 	</select>
-	<input name="startDate" class ="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime($ts_start))); ?>" />
-	<input name="endDate" class="hidden" value="<?php print(date("d-m-Y", $this->model->strToTime_EndDate($ts_end))); ?>" />
+	<input name="startDate" class ="hidden" value="<?=date("d-m-Y", $this->model->strToTime($ts_start))?>" />
+	<input name="endDate" class="hidden" value="<?=date("d-m-Y", $this->model->strToTime_EndDate($ts_end))?>" />
 
 	<button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
 		<i class="icon-download-alt icon-white"></i> Exporter
@@ -48,8 +57,7 @@
 	<div class="tab-pane in active" id="Actions">
 		<div class="row">
 			<div class="span6 well">
-				<h2>Par actions : </h2>
-				<?php $this->printTabDesc($this->model->getActions()); ?>
+				<?php $this->printCalendar("actions",$slotTime); ?>
 			</div>
 		</div>
 	</div>
@@ -57,8 +65,7 @@
 	<div class="tab-pane fade" id="Modalites">
 		<div class="row">
 			<div class="span6 well">
-				<h2>Par modalités : </h2>
-				<?php $this->printTabDesc($this->model->getModalites()); ?>
+				<?php $this->printCalendar("modalites", $slotTime); ?>
 			</div>
 		</div>
 	</div>
@@ -72,7 +79,7 @@
 				
 		<div class="well">
 			<ul>
-				<?php $this->printError(); ?>
+				<?php $this->printError("error.phtml"); ?>
 			</ul>
 
 	</div>
@@ -82,4 +89,43 @@
 
 
 
+	
+</div>		
+			
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
 
+
+<script type="text/javascript">
+	$('#simpleError').click(function () {
+		if($('#simpleError').is(':checked')){
+			$('.errorLvl0').css('display','list-item');
+		} else {
+			$('.errorLvl0').css('display','none');
+		}
+	});
+
+	$('#seriousError').click(function () {
+		if($('#seriousError').is(':checked')){
+			$('.errorLvl1').css('display','list-item');
+		} else {
+			$('.errorLvl1').css('display','none');
+		}
+	});
+
+	$('#warningError').click(function () {
+		if($('#warningError').is(':checked')){
+			$('.errorLvl2').css('display','list-item');
+		} else {
+			$('.errorLvl2').css('display','none');
+		}
+	});
+</script>
+			
+<script>
+	$('.datepicker').datepicker();
+</script>
+
+</body>
+</html>

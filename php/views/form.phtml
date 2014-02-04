@@ -1,3 +1,20 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+    <head>
+
+        <meta charset="utf-8" />
+        <title>CDG : Analyseur de calendrier</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+		<link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/style.css">
+
+    </head>
+
+    <body>
+		<div class="container-fluid">
 
 <ul class="nav nav-tabs" id="myTab">
   <li class="active"><a href="#Actions" data-toggle="tab">Liste des Actions</a></li>
@@ -25,7 +42,7 @@
 		<tbody>
 <?php
 	// Permet l'affichage du tableau des actions du cdg
-	foreach ($this->model->getTabAction() as $action => $value) {
+	foreach ($GLOBALS["actions"] as $action => $value) {
 		print "\t\t\t<tr>";
 		print '<td>' . $action . '</td>';
 		foreach ($value as $key => $values) {
@@ -57,7 +74,7 @@
 
 			<?php
 			// Permet l'affichage du tableau des modalites du cdg
-			foreach ($this->model->getTabModalite() as $modalite => $value) {
+			foreach ($GLOBALS["modalites"] as $modalite => $value) {
 				print "\t\t\t<tr>";
 				print '<td>' . $modalite . '</td>';
 				foreach ($value as $key => $values) {
@@ -133,10 +150,11 @@
 					<label class="control-label" for="ics">Export : </label>
 					<div class="controls">
 						<select class="span3" name="export">
-							<option value="Total" >Total</option>
-							<option value="day"   >Par jour</option>
-							<option value="week"  >Par semaine</option>
+							<option value="All"   >Total</option>
+							<option value="day"   >Par jours</option>
+							<option value="week"  >Par semaines</option>
 							<option value="month" >Par mois</option>
+							<option value="year"  >Par ans</option>
 						</select>
 
 					</div>
@@ -145,9 +163,9 @@
 
 			<div class="control-group">
 				<div class="controls">
-					<button id="showresults" class="btn btn-primary" type="submit" name="action" value="Montrer résultats">
+					<button id="showresults" class="btn btn-primary" type="submit" name="action" value="Show">
 						<i class="icon-eye-open icon-white"></i> Afficher</button> 
-					<button id="export" class="btn btn-info control-button" type="submit" name="action" value="Exporter">
+					<button id="export" class="btn btn-info control-button" type="submit" name="action" value="Export">
 						<i class="icon-download-alt icon-white"></i> Exporter
 					</button>
 				</div>
@@ -158,3 +176,44 @@
 		</form>	
 </div>
 </div>
+
+	
+</div>		
+			
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+
+
+<script type="text/javascript">
+	$('#simpleError').click(function () {
+		if($('#simpleError').is(':checked')){
+			$('.errorLvl0').css('display','list-item');
+		} else {
+			$('.errorLvl0').css('display','none');
+		}
+	});
+
+	$('#seriousError').click(function () {
+		if($('#seriousError').is(':checked')){
+			$('.errorLvl1').css('display','list-item');
+		} else {
+			$('.errorLvl1').css('display','none');
+		}
+	});
+
+	$('#warningError').click(function () {
+		if($('#warningError').is(':checked')){
+			$('.errorLvl2').css('display','list-item');
+		} else {
+			$('.errorLvl2').css('display','none');
+		}
+	});
+</script>
+			
+<script>
+	$('.datepicker').datepicker();
+</script>
+
+</body>
+</html>
