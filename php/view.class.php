@@ -42,53 +42,6 @@ class View {
 		include("php/views/result.phtml");
 	}
 
-	/************************************************************************
-	 * Show result as CSV File
-	 ************************************************************************/
-	/*function showCsv($tab_cal, $ts_start, $ts_end, $export_type = "") {
-
-		$nomCal = $this->nomCal($tab_cal);
-
-		// File headers (this is not html)
-		//header("Content-type: application/vnd.ms-excel");
-		header("Content-type: text/csv");
-		header("Content-disposition: attachment; filename=$nomCal.csv");
-
-		switch ($export_type) {
-			case 'day':
-					$title = "\"Date\";";
-				break;
-			case 'week':
-					$title = "\"Semaine (Année)\";";
-				break;
-			
-			case 'month':
-					$title = "\"mois (Année)\";";
-				break;
-
-			default:
-					$title = "";
-				break;
-		}
-		print("\"Nom\";".$title."\"Actions\";\"Modalités\";\"Temps(min)\"");
-
-		// Traitement des différents calendriers
-		foreach ($tab_cal as $key => $cal) {
-			$this->model->analyseCal(array($cal), $ts_start, $ts_end);
-			$tab_results = $this->model->getActions();
-			$cal_name = $this->nomCal(array($cal));
-			
-			// Send file content
-			
-			foreach($tab_results as $action => $code){
-				foreach($code['subcode'] as $subcode => $value){
-					print("\n\"".$cal_name.'";"'.$action.'";"'.$subcode.'";'.($value/60));
-				}
-			}
-			
-		}
-	}/**/
-
 	/**
 	 * print data by period in a certain order
 	 * 
@@ -163,9 +116,9 @@ class View {
 
 		// Headers
 		$header = "\"Nom\";";
-		if ($title != "") 
-			$header .= $title.";";
-		$header .= "\"Actions\";\"Modalités\";\"Temps(Heures)\"\n";
+		/*if ($title != "") 
+			$header .= $title.";";*/
+		$header .= "\"Actions\";\"Modalités\";\"Temps(Min)\"\n";
 		print($header);
 
 		foreach ($data as $calName => $calData) {
@@ -178,11 +131,11 @@ class View {
 					foreach ($subData as $subCode => $duration) {
 						if($subCode == 'duration') continue;
 						$line = "\"".$calName."\";";
-						if($title != "") 
-							$line .= "\"".$slotName."\";";
+						/*if($title != "") 
+							$line .= "\"".$slotName."\";";*/
 						$line .= "\"".$code."\";";
 						$line .= "\"".$subCode."\";";
-						$line .= "\"".$duration."\";\n";
+						$line .= "\"".($duration/60)."\";\n";
 
 						print("$line");
 					}

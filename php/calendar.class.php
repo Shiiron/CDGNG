@@ -180,9 +180,10 @@ class Calendar{
 			if(!isset($output[$slot]['duration']))
 				$output[$slot]['duration'] = 0;
 			foreach ($dayCodes as $action => $subCode) {
-				$output[$slot]['actions'][$action]['duration'] = 0;
+				
+				//$output[$slot]['actions'][$action]['duration'] = 0;
 				foreach ($subCode as $modalite => $duration) {
-					if(		isset($output[$slot]['a'][$action][$modalite])){
+					if(		isset($output[$slot]['actions'][$action][$modalite])){
 				//		&&	isset($output[$slot]['m'][$modalite][$action]){  //Inutile
 						$output[$slot]['actions'][$action][$modalite] += $duration;
 						$output[$slot]['modalites'][$modalite][$action] += $duration;
@@ -190,12 +191,18 @@ class Calendar{
 						$output[$slot]['actions'][$action][$modalite] = $duration;
 						$output[$slot]['modalites'][$modalite][$action] = $duration;
 					}
-					$output[$slot]['actions'][$action]['duration'] 	+= $duration;
+					//$output[$slot]['actions'][$action]['duration'] 	+= $duration;
+					if(isset($output[$slot]['actions'][$action]['duration']))
+						$output[$slot]['actions'][$action]['duration'] += $duration;
+					else
+						$output[$slot]['actions'][$action]['duration'] = $duration;
 
 					if(isset($output[$slot]['modalites'][$modalite]['duration']))
 						$output[$slot]['modalites'][$modalite]['duration'] 	+= $duration;
 					else
-						$output[$slot]['modalites'][$modalite]['duration'] 	= $duration;
+						$output[$slot]['modalites'][$modalite]['duration'] = $duration;
+
+
 					$output[$slot]['duration'] += $duration;
 					$output['duration'] += $duration;
 				}
