@@ -163,6 +163,7 @@ class View {
 	}
 	
 	function exportTableauCDG(){
+
 		if($_POST["action"] == "tableauAction") {
 			$tab = $GLOBALS['actions'];
 			$nomCal = "actions";
@@ -176,7 +177,13 @@ class View {
 		$csv->Insertion("\"Code\";\"Intitulé\";\"Description\"");
 		
 		foreach($tab as $code => $tab_code){
-			$csv->Insertion('"'.$code.'";"'.$tab_code["Intitulé"].'";"'.$tab_code["Description"].'"');
+			if($_POST["action"] == "tableauAction") {
+				if(($tab_code['Visible'] == 1) || isset($_POST["showArchived"])){
+					$csv->Insertion('"'.$code.'";"'.$tab_code["Intitulé"].'";"'.$tab_code["Description"].'"');
+				}
+			}
+			else
+				$csv->Insertion('"'.$code.'";"'.$tab_code["Intitulé"].'";"'.$tab_code["Description"].'"');
 		}
 		$csv->output($nomCal."csv");
 	}/**/
