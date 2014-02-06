@@ -126,7 +126,7 @@ class Event {
 		// Superposed event.
 		foreach ($events as $event) {
 			if($this->isOverlap($event)) {
-				$error = array(2, "se superpose à ".$event["SUMMARY"].".");
+				$error = array(2, "se superpose à ".$event->getSummary().".");
 				return false;
 			}
 		}
