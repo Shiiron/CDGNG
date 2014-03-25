@@ -113,7 +113,7 @@ class Event {
 
 		// bad code
 		if (!array_key_exists($code["act"], $GLOBALS['actions'])) {
-			$this->addToError(2, $event, "Mauvais code (action).");
+			$error = array(2, "Mauvais code (action).");
 			return false;
 		}
 
