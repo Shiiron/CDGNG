@@ -116,8 +116,7 @@ class View {
 
 		// Headers
 		$header = "\"Nom\";";
-		/*if ($title != "") 
-			$header .= $title.";";*/
+		if ($title != "") $header .= $title;
 		$header .= "\"Actions\";\"Modalités\";\"Temps(Min)\"\n";
 		print($header);
 
@@ -131,8 +130,8 @@ class View {
 					foreach ($subData as $subCode => $duration) {
 						if($subCode == 'duration') continue;
 						$line = "\"".$calName."\";";
-						/*if($title != "") 
-							$line .= "\"".$slotName."\";";*/
+						if($title != "") 
+							$line .= "\"".$slotName."\";";
 						$line .= "\"".$code."\";";
 						$line .= "\"".$subCode."\";";
 						$line .= "\"".($duration/60)."\";\n";

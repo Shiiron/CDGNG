@@ -109,7 +109,7 @@
 					// Récupération et affichage du nom des calendriers
 					$tab_cal_path = $this->model->getCalList();
 
-					print('<select name="ics[]" class="span3" multiple="multiple">');
+					print('<select name="ics[]" size=10 class="span3" multiple="multiple">');
 
 					// Récupération des calendriers
 					foreach ($tab_cal_path as $key => $value) {
