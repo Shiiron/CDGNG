@@ -52,9 +52,10 @@ $GLOBALS['modalites'] = array(
 	"Q" => array(
 		"Intitulé" => "Création de ressources pédagogiques",
 		"Description" => "site web, films, ouvrages..."),
-	/* "R" => array("Intitulé" => "",
-	  "Description" => ""),",
-	  "S" => array("Intitulé" => "",
+	"R" => array(
+		"Intitulé" => "Préparation de cours",
+	  	"Description" => ""),
+/*	  "S" => array("Intitulé" => "",
 	  "Description" => ""),",
 	  "T" => array("Intitulé" => "",
 	  "Description" => ""),",
