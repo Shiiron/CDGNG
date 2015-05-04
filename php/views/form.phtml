@@ -114,14 +114,8 @@
 					// Récupération des calendriers
 					foreach ($tab_cal_path as $key => $value) {
 
-						// Elimination de l'extension .ics
-						$path = $value;
-						$tab_Explode = explode(".", $value);
-						$pathCal = $tab_Explode[0];
-
-						// Elimination du cal/ devant le nom du calendrier
-						$tab_NomCal = explode("/", $pathCal);
-						$nomCal = $tab_NomCal[1];
+						$nomCal = basename($value);
+						$nomCal = explode(".", $nomCal)[0];
 
 						print('<option id="' . $key . '" name="ics" value="' . $path . '">' . $nomCal . '</option>');
 					}
