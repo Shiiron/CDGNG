@@ -417,4 +417,3 @@ $GLOBALS['actions'] = array(
 		'Referent' => "",
 		'Visible'	=> 0,),
 );
-?>

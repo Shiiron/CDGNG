@@ -73,4 +73,4 @@ $GLOBALS['modalites'] = array(
 		"Intitulé" => "Sans Intitulé",
 		"Description" => "Sans objet, pour les persones qui ne souhaitent pas des modalités"),
 );
-?>
+

@@ -373,4 +373,3 @@ class Ical
 		return $this->cal;
 	}
 }
-?>
