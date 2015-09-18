@@ -7,124 +7,124 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
-		<link rel="stylesheet" href="css/datepicker.css">
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="css/datepicker.css">
         <link rel="stylesheet" href="css/style.css">
 
     </head>
 
     <body>
-		<div class="container-fluid">
+        <div class="container-fluid">
 
 <h2>
-	Calendriers : <?=$this->model->getName()?>
+    Calendriers : <?=$this->model->getName()?>
 </h2>
 
 <h3>
-	<?=date("d/m/Y", $this->model->strToTime($ts_start))?> au 
-	<?=date("d/m/Y", $this->model->strToTime_EndDate($ts_end))?>
-	<?=" (".(floor($total) / 3600)?>h)
+    <?=date("d/m/Y", $this->model->strToTime($ts_start))?> au 
+    <?=date("d/m/Y", $this->model->strToTime_EndDate($ts_end))?>
+    <?=" (".$this->format(floor($total))?>h)
 </h3> 
 
 <!-- Gestion de l'export sur la page de résultat -->
 <form method="post" action="index.php">
 <a class="btn btn-primary" href="index.php">Retour</a>
 
-	<select name="ics[]" multiple="multiple" class="hidden">
-		<?php
-		foreach ($cal_path as $value)
-			print('<option selected name="ics" value="'.$value.'">'.$value.'</option>');
-		?>
-	</select>
-	<select name="export" class="hidden">
-		<option selected name="export" value="Total">Total</option>
-	</select>
-	<input name="startDate" class ="hidden" value="<?=date("d-m-Y", $this->model->strToTime($ts_start))?>" />
-	<input name="endDate" class="hidden" value="<?=date("d-m-Y", $this->model->strToTime_EndDate($ts_end))?>" />
+    <select name="ics[]" multiple="multiple" class="hidden">
+        <?php
+        foreach ($cal_path as $value)
+            print('<option selected name="ics" value="'.$value.'">'.$value.'</option>');
+        ?>
+    </select>
+    <select name="export" class="hidden">
+        <option selected name="export" value="Total">Total</option>
+    </select>
+    <input name="startDate" class ="hidden" value="<?=date("d-m-Y", $this->model->strToTime($ts_start))?>" />
+    <input name="endDate" class="hidden" value="<?=date("d-m-Y", $this->model->strToTime_EndDate($ts_end))?>" />
 
-	<button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
-		<i class="icon-download-alt icon-white"></i> Exporter
-	</button>
+    <button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
+        <i class="icon-download-alt icon-white"></i> Exporter
+    </button>
 </form>
 
 <ul class="nav nav-tabs" id="myTab">
-	<li class="active"><a href="#Actions" data-toggle="tab">Résultat par Action</a></li>
-	<li><a href="#Modalites" data-toggle="tab">Résultat par Modalité</a></li>
-	<li><a href="#Erreurs" data-toggle="tab">Erreurs</a></li>
+    <li class="active"><a href="#Actions" data-toggle="tab">Résultat par Action</a></li>
+    <li><a href="#Modalites" data-toggle="tab">Résultat par Modalité</a></li>
+    <li><a href="#Erreurs" data-toggle="tab">Erreurs</a></li>
 </ul>
 
 <div id="myTabContent" class="tab-content">
-	<div class="tab-pane in active" id="Actions">
-		<div class="row">
-			<div class="span6 well">
-				<?php $this->printCalendar("actions",$slotTime); ?>
-			</div>
-		</div>
-	</div>
+    <div class="tab-pane in active" id="Actions">
+        <div class="row">
+            <div class="span6 well">
+                <?php $this->printCalendar("actions",$slotTime); ?>
+            </div>
+        </div>
+    </div>
 
-	<div class="tab-pane fade" id="Modalites">
-		<div class="row">
-			<div class="span6 well">
-				<?php $this->printCalendar("modalites", $slotTime); ?>
-			</div>
-		</div>
-	</div>
-	
-	<div class="tab-pane fade" id="Erreurs">
-		<ul class="inline">
-			<li><input type="checkbox" checked id="simpleError"/>Infos</li>
-			<li><input type="checkbox" checked id="seriousError"/>Avertissements</li>
-			<li><input type="checkbox" checked id="warningError"/>Erreurs</li>
-		</ul>
-				
-		<div class="well">
-			<ul>
-				<?php $this->printError("error.phtml"); ?>
-			</ul>
+    <div class="tab-pane fade" id="Modalites">
+        <div class="row">
+            <div class="span6 well">
+                <?php $this->printCalendar("modalites", $slotTime); ?>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="Erreurs">
+        <ul class="inline">
+            <li><input type="checkbox" checked id="simpleError"/>Infos</li>
+            <li><input type="checkbox" checked id="seriousError"/>Avertissements</li>
+            <li><input type="checkbox" checked id="warningError"/>Erreurs</li>
+        </ul>
+                
+        <div class="well">
+            <ul>
+                <?php $this->printError("error.phtml"); ?>
+            </ul>
 
-	</div>
+    </div>
 </div>
 
 <a class="btn btn-primary" href="index.php">Retour</a>
 
 
 
-	
-</div>		
-			
+    
+</div>      
+            
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
 
 
 <script type="text/javascript">
-	$('#simpleError').click(function () {
-		if($('#simpleError').is(':checked')){
-			$('.errorLvl0').css('display','list-item');
-		} else {
-			$('.errorLvl0').css('display','none');
-		}
-	});
+    $('#simpleError').click(function () {
+        if($('#simpleError').is(':checked')){
+            $('.errorLvl0').css('display','list-item');
+        } else {
+            $('.errorLvl0').css('display','none');
+        }
+    });
 
-	$('#seriousError').click(function () {
-		if($('#seriousError').is(':checked')){
-			$('.errorLvl1').css('display','list-item');
-		} else {
-			$('.errorLvl1').css('display','none');
-		}
-	});
+    $('#seriousError').click(function () {
+        if($('#seriousError').is(':checked')){
+            $('.errorLvl1').css('display','list-item');
+        } else {
+            $('.errorLvl1').css('display','none');
+        }
+    });
 
-	$('#warningError').click(function () {
-		if($('#warningError').is(':checked')){
-			$('.errorLvl2').css('display','list-item');
-		} else {
-			$('.errorLvl2').css('display','none');
-		}
-	});
+    $('#warningError').click(function () {
+        if($('#warningError').is(':checked')){
+            $('.errorLvl2').css('display','list-item');
+        } else {
+            $('.errorLvl2').css('display','none');
+        }
+    });
 </script>
-			
+            
 <script>
-	$('.datepicker').datepicker();
+    $('.datepicker').datepicker();
 </script>
 
 </body>

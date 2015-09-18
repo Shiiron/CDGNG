@@ -98,24 +98,24 @@ class View
         }
         //Parcours les calendriers
         foreach ($data as $calName => $calData) {
-            print("<h3>"."$calName (".($calData['duration']/3600)."h) </h3>");
+            print("<h3>"."$calName (".$this->format($calData['duration'])."h) </h3>");
             //Parcours les périodes (jours, semaines, mois, années)
             foreach ($calData as $slotName => $slotData) {
                 if($slotName == 'duration') continue;
-                print("<h4>"."$slotName (".($slotData['duration']/3600)."h)</h4>");
+                print("<h4>"."$slotName (".$this->format($slotData['duration'])."h)</h4>");
 
                 //Parcours les codes (actions)
                 foreach ($slotData[$t] as $code => $subData) {
                     if($code == 'duration') continue;
                     print($code ." : ".$GLOBALS[$t][$code]['Intitulé']
-                                ." (".($subData['duration']/3600)."h)\n");
+                                ." (".$this->format($subData['duration'])."h)\n");
                     print("<ul>");
                     //Parcours les souscodes (modalités)
                     foreach ($subData as $subCode => $duration) {
                         if($subCode == 'duration') continue;
                         print("<li>".$subCode." : "
                             .$GLOBALS[$t2][$subCode]['Intitulé']." ("
-                            .($duration/3600)."h) </li>\n");
+                            .$this->format($duration)."h) </li>\n");
                     }
                     print("</ul>");
                 }
@@ -205,6 +205,17 @@ class View
                 include("php/views/".$template);
             }
         }
+    }
+    
+    /**
+     * Second to hour round to two after dot.
+     * 
+     * @param string $template template filename in /php/views/
+     * 
+     */
+    private function format($seconds)
+    {
+        return round(($seconds/3600), 2);
     }
 
 }
