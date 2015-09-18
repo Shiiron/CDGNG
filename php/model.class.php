@@ -163,6 +163,6 @@ class Model {
 		foreach ($this->calendars as $name => $calendar) {	
 			$output .= $calendar->getName()."+";
 		}
-		return substr($output, 0, -2);
+		return substr($output, 0, -1);
 	}
 }
