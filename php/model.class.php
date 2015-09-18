@@ -161,15 +161,7 @@ class Model {
 	function GetName(){
 		$output = "";
 		foreach ($this->calendars as $name => $calendar) {	
-			print("<pre>");
-			print_r($name);
-			print("</pre>");
-
-			print("<pre>");
-			print_r($calendar);
-			print("</pre>");
-
-			$output .= $calendar->getName().", ";
+			$output .= $calendar->getName()."+";
 		}
 		return substr($output, 0, -2);
 	}

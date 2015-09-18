@@ -124,13 +124,7 @@ class Calendar{
 	 * @return string
 	 */
 	function getName(){
-		$ical = new ical();
-		$ical->parse($this->path);
-		$donnees = $ical->get_calender_data();
-		if (isset($donnees["X-WR-CALNAME"])) {
-			$nom = $donnees["X-WR-CALNAME"];
-			return($nom);
-		}
+		return basename($this->path, '.ics');
 	}
 
 	function getData($slot="total"){
@@ -183,8 +177,7 @@ class Calendar{
 				
 				//$output[$slot]['actions'][$action]['duration'] = 0;
 				foreach ($subCode as $modalite => $duration) {
-					if(		isset($output[$slot]['actions'][$action][$modalite])){
-				//		&&	isset($output[$slot]['m'][$modalite][$action]){  //Inutile
+					if (isset($output[$slot]['actions'][$action][$modalite])) {
 						$output[$slot]['actions'][$action][$modalite] += $duration;
 						$output[$slot]['modalites'][$modalite][$action] += $duration;
 					} else {
@@ -192,12 +185,12 @@ class Calendar{
 						$output[$slot]['modalites'][$modalite][$action] = $duration;
 					}
 					//$output[$slot]['actions'][$action]['duration'] 	+= $duration;
-					if(isset($output[$slot]['actions'][$action]['duration']))
+					if (isset($output[$slot]['actions'][$action]['duration']))
 						$output[$slot]['actions'][$action]['duration'] += $duration;
 					else
 						$output[$slot]['actions'][$action]['duration'] = $duration;
 
-					if(isset($output[$slot]['modalites'][$modalite]['duration']))
+					if (isset($output[$slot]['modalites'][$modalite]['duration']))
 						$output[$slot]['modalites'][$modalite]['duration'] 	+= $duration;
 					else
 						$output[$slot]['modalites'][$modalite]['duration'] = $duration;
@@ -215,22 +208,21 @@ class Calendar{
 
 	/**
 	 * Return calendar's path
-	 * 
-	 * @return string
 	 */
 	function getPath(){
-		return $path;
+		return $this->path;
 	}
 
 	/**
 	 * Return all valid events's duration
-	 * 
-	 * @return string
 	 */
 	function getTotalLength(){
 		return $this->totalLength;
 	}
 
+	/**
+	 * Return error detected when parsing calendar
+	 */
 	function getErrors(){
 		return $this->errors;
 	}
