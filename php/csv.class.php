@@ -12,6 +12,9 @@ class CSV {
     function Insert($row){
         $string = "";
         foreach ($row as $cell) {
+            // corrige le bug de l'export avec des intitulés contenant des
+            // guillemet.
+            $cell = str_replace('"','""', $cell);
             $string .= '"'.$cell.'",';
         }
         $this->csv .= $string."\n";
