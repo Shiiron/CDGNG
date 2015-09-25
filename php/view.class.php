@@ -90,11 +90,10 @@ class View
         $data = $this->model->getData($slot);
 
         if($type == "actions") {
-            $t = 'actions';
-            $t2 = 'modalites';
+            $type2 = 'modalites';
         } else {
-            $t = 'modalites';
-            $t2 = 'actions';
+            $type = 'modalites';
+            $type2 = 'actions';
         }
         //Parcours les calendriers
         foreach ($data as $calName => $calData) {
@@ -103,18 +102,19 @@ class View
             foreach ($calData as $slotName => $slotData) {
                 if($slotName == 'duration') continue;
                 print("<h4>"."$slotName (".$this->format($slotData['duration'])."h)</h4>");
-
+                ksort($slotData[$type]);
                 //Parcours les codes (actions)
-                foreach ($slotData[$t] as $code => $subData) {
+                foreach ($slotData[$type] as $code => $subData) {
                     if($code == 'duration') continue;
-                    print($code ." : ".$GLOBALS[$t][$code]['Intitulé']
+                    print($code ." : ".$GLOBALS[$type][$code]['Intitulé']
                                 ." (".$this->format($subData['duration'])."h)\n");
                     print("<ul>");
+                    ksort($subData);
                     //Parcours les souscodes (modalités)
                     foreach ($subData as $subCode => $duration) {
                         if($subCode == 'duration') continue;
                         print("<li>".$subCode." : "
-                            .$GLOBALS[$t2][$subCode]['Intitulé']." ("
+                            .$GLOBALS[$type2][$subCode]['Intitulé']." ("
                             .$this->format($duration)."h) </li>\n");
                     }
                     print("</ul>");
@@ -170,10 +170,12 @@ class View
                 if ($slotName == 'duration') 
                     continue;
                 //Parcours les codes (actions)
+                ksort($slotData['actions']);
                 foreach ($slotData['actions'] as $code => $subData) {
                     if ($code == 'duration') 
                         continue;
                     //Parcours les souscodes (modalités)
+                    ksort($subData);
                     foreach ($subData as $subCode => $duration) {
                         if ($subCode == 'duration') 
                             continue;
