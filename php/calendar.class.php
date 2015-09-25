@@ -63,13 +63,13 @@ class Calendar{
 
             // Event is in time slot
             if (($event->getStart() >= $ts_start)
-                && ($event->getEnd() <= $ts_end)) {
+                and ($event->getEnd() <= $ts_end)) {
                 
                 if($event->isValid($tab_events, $error)){
-
-                    array_push($tab_events, $event);
-                    $this->addEvent($event);
-
+                    if ($event->isSelected()) {
+                        array_push($tab_events, $event);
+                        $this->addEvent($event);
+                    }
                 } else {
                     // 0 -> level ; 1 -> description
                     $this->addToError($error[0], $event, $error[1]);

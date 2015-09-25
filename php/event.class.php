@@ -69,6 +69,24 @@ class Event {
 		}
 	}
 
+
+	/**
+	 * check if event action code is in selection
+	 * 
+	 * @return true or false.
+	 */
+	function isSelected() {
+		if(in_array('Tous', $_POST['codes']))
+			return True;
+
+		$code = $this->getCode()['act'];
+
+		if(in_array($code, $_POST['codes']))
+			return True;
+
+		return false;
+	}
+
 	/**
 	 * check if event is valid
 	 * 
@@ -77,16 +95,16 @@ class Event {
 	 * 
 	 * @return true or false.
 	 */
-	function isValid($events, &$error){
+	function isValid($events, &$error) {
 
 		// Event without end
-		if (!isset($this->e["DTEND"])){
+		if (!isset($this->e["DTEND"])) {
 			$error = array(99, "Sans fin.");
 			return false; //Ignored
 		}
 
 		// Event without summary
-		if(!isset($this->e["SUMMARY"])){
+		if(!isset($this->e["SUMMARY"])) {
 			$error = array(99, "Sans titre.");
 			return false; //Ignored
 		}

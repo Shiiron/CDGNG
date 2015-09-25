@@ -121,6 +121,24 @@
 					}
 					print("</select>");
 					?>
+				</div><br />
+				<label class="control-label" for="action">Action(s) : </label>
+				<div class="controls">
+
+					<?php
+					// Récupération et affichage du nom des calendriers
+					$tab_cal_path = $this->model->getCalList();
+
+					print('<select name="codes[]" size=5 class="span3" multiple="multiple">');
+
+					print('<option value="Tous" selected="selected" >Tous</option>');
+					// Récupération des calendriers
+					foreach ($GLOBALS["actions"] as $action => $value) {
+
+						print('<option name="codes" value="' . $action . '">[' . $action . '] ' . $value['Intitulé'] . '</option>');
+					}
+					print("</select>");
+					?>
 				</div>
 
 			</div>
