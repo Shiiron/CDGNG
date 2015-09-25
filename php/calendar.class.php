@@ -51,7 +51,6 @@ class Calendar{
      */ 
 
     function parse($ts_start, $ts_end){
-
         $ical = new ical();
         $ical->parse($this->path);
 
@@ -61,9 +60,10 @@ class Calendar{
             
             $event = new Event($event_desc);
 
-            // Event is in time slot
+            // Event is in time slot and not a full day event
             if (($event->getStart() >= $ts_start)
-                and ($event->getEnd() <= $ts_end)) {
+                and ($event->getEnd() <= $ts_end)
+                and !$event->isFullDay()) {
                 
                 if($event->isValid($tab_events, $error)){
                     if ($event->isSelected()) {

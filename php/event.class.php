@@ -88,6 +88,17 @@ class Event {
 	}
 
 	/**
+	 * check if this is a full day event
+	 * 
+	 * @return true or false.
+	 */
+	function isFullDay() {
+		if ($this->getLength() == 86400)
+			return true;
+		return false;
+	}
+
+	/**
 	 * check if event is valid
 	 * 
 	 * @param array $events Array of events object to check superposed
@@ -115,7 +126,7 @@ class Event {
 			return false;
 		}
 
-		$code = $this->getCode($this->e);
+		$code = $this->getCode();
 
 		// Uncoded event
 		if ($code == false) {
