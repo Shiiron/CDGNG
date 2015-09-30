@@ -162,12 +162,12 @@ class Calendar{
         $output = array();
         $output['duration'] = 0;
 
-        if($format == "All")
-            $slot = "All";
-        else
-            $slot = date($format, $date);
-        
         foreach ($this->dailyTime as $date => $dayCodes) {
+
+            if($format == "All")
+                $slot = "All";
+            else
+                $slot = date($format, $date);
 
             if(!isset($output[$slot]['duration']))
                 $output[$slot]['duration'] = 0;
