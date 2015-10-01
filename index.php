@@ -42,7 +42,16 @@ switch ($action) {
 		else
 			print ("Aucun fichier n'a été sélectionné");
 		break;
-	
+
+	case "Realised":
+		$_POST['codes'] = array('Tous');
+		if(isset($_POST["ics"]))
+			$view->showRealised($_POST["ics"],
+                           $_POST["date"]);
+		else
+			print ("Aucun fichier n'a été sélectionné");
+		break;
+
 	case "tableauAction":
 		$view->exportTableauCDG("actions", isset($_POST["showArchived"]));
 		break;

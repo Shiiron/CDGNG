@@ -193,6 +193,72 @@ class View
         $csv->Output($calendar_name);
     }
 
+    public function showRealised($paths, $date) 
+    {
+        $year = (int)explode('-', $date)[2];
+        $month = (int)explode('-', $date)[1];
+
+        if ($month <= 8) 
+            $year -= 1;
+            
+        $ts_start = "01-09-".($year);
+        $ts_end = "31-08-".($year + 1);
+        
+
+        $this->model->analyseCal($paths, $ts_start, $ts_end);
+        $calendar_name = $this->model->getName();
+        $data = $this->model->getData('day');
+        // On ne prend en compte que le premier élément.
+        $data = reset($data);
+
+        $csv = new CSV();
+
+        // Headers
+        $header = array(
+            'Septembre', '', '', 'Octobre', '', '', 'Novembre', '', '', 
+            'Décembre', '', '', 'Janvier', '', '', 'Février', '', '',
+            'Mars', '', '', 'Avril', '', '', 'Mai', '', '',
+            'Juin', '', '', 'Juillet', '', '', 'Aout', '', '',
+        );
+
+        $day_name = array(
+            'Mon' => 'L', 'Tue' => 'M', 'Wed' => 'M', 'Thu' => 'J',
+            'Fri' => 'V', 'Sat' => 'S', 'Sun' => 'D',
+        );
+
+        $months = array(9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8);
+        
+        $csv->Insert($header);  
+
+        for ($day=1; $day <= 31; $day++) {
+            $row = array();
+            foreach ($months as $month) {
+                if ($month <= 8)
+                    $timestamp = mktime(0, 0, 0, $month, $day, $year + 1);
+                else
+                    $timestamp = mktime(0, 0, 0, $month, $day, $year);
+                $date = date("Y/m/d", $timestamp);
+                $add = array();
+                // Vérifie si le jour existe dans le mois.
+                if (date("m", $timestamp) != $month) 
+                    $add = array('', '', '');
+                // Vérifie si des heures ont été contabilisée pour ce jour
+                else if (isset($data[$date]['duration']))
+                    $add = array(
+                        $day,
+                        $day_name[date("D", $timestamp)],
+                        number_format($data[$date]['duration']/3600, 2, ',', ' ')
+                    );
+                else 
+                    $add = array($day, $day_name[date("D", $timestamp)], '');
+
+                $row = array_merge($row, $add);
+            }
+            $csv->Insert($row);
+        }
+        $csv->Output($calendar_name);
+    }
+
     /**
      * Print error list using template
      * 

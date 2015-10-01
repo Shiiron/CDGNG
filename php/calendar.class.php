@@ -193,7 +193,6 @@ class Calendar{
                     else
                         $output[$slot]['modalites'][$modalite]['duration'] = $duration;
 
-
                     $output[$slot]['duration'] += $duration;
                     $output['duration'] += $duration;
                 }
@@ -202,6 +201,10 @@ class Calendar{
 
         ksort($output);
         return $output;
+    }
+
+    function getRealised(){
+        
     }
 
     /**

@@ -8,7 +8,8 @@
  * @version GIT: $Id$
  * 
  */
-class Event {
+class Event 
+{
 
 	/*************************************************************************
 	 * STATES
@@ -29,7 +30,8 @@ class Event {
 	 * @param array $event Event's description from ical Class
 	 * 
 	 */
-	function __construct($event){
+	function __construct($event)
+	{
 		$this->load($event);
 	}
 
@@ -38,7 +40,8 @@ class Event {
 	 * 
 	 * @param array $event Event's description from ical Class
 	 */
-	function load($event){
+	function load($event)
+	{
 		$this->e = $event;
 		$this->standardize();
 	}
@@ -46,7 +49,8 @@ class Event {
 	/**
 	 * Standardize description
 	 */
-	private function standardize(){
+	private function standardize()
+	{
 		// Gestion des DTXXX qui ne sont pas des tableaux
 		// Dans les calendriers édités avec google ce ne sont pas des tableaux
 		// Alors que dans ceux avec thunderbird c'est le cas.
@@ -75,7 +79,8 @@ class Event {
 	 * 
 	 * @return true or false.
 	 */
-	function isSelected() {
+	function isSelected() 
+	{
 		if(in_array('Tous', $_POST['codes']))
 			return True;
 
@@ -92,7 +97,8 @@ class Event {
 	 * 
 	 * @return true or false.
 	 */
-	function isFullDay() {
+	function isFullDay() 
+	{
 		if ($this->getLength() == 86400)
 			return true;
 		return false;
