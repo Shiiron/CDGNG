@@ -3,7 +3,8 @@
 $GLOBALS['actions'] = array(
     '001' => array(
         'Intitulé' => "Instances de SupAgro",
-        'Description' => "Uniquement si aucun lien avec une action - Ne pas utiliser par défaut!",
+        'Description' => "Uniquement si aucun lien avec une action - Ne "
+        . "pas utiliser par défaut!",
         'Referent' => "",
         'Visible' => 1),
     '002' => array(
@@ -23,7 +24,8 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '005' => array(
         'Intitulé' => "'Fonctionnement de SupAgro Florac",
-        'Description' => "Réunion de service, ... uniquement si aucun lien avec une action - Ne pas utiliser par défaut!",
+        'Description' => "Réunion de service, ... uniquement si aucun lien "
+        . "avec une action - Ne pas utiliser par défaut!",
         'Referent' => "",
         'Visible' => 1),
     '006' => array(
@@ -43,7 +45,8 @@ $GLOBALS['actions'] = array(
         'Visible' => 0),
     '101' => array(
         'Intitulé' => "SNA : Plateforme Enviescolaire",
-        'Description' => "Animation de la plateforme enviescolaire (Ex Elèves Acteurs : Délégués)",
+        'Description' => "Animation de la plateforme enviescolaire (Ex Elèves "
+        . "Acteurs : Délégués)",
         'Referent' => "Anne",
         'Visible' => 1),
     '102' => array(
@@ -77,13 +80,16 @@ $GLOBALS['actions'] = array(
         'Referent' => "Loïc",
         'Visible' => 0),
     '108' => array(
-        'Intitulé' => "EDD : Actes du colloque 2012 et participation WEEC (Maroc)",
+        'Intitulé' => "EDD : Actes du colloque 2012 et participation WEEC "
+        . "(Maroc)",
         'Description' => "",
         'Referent' => "Orane",
         'Visible' => 0),
     '109' => array(
         'Intitulé' => "ACCED - Accompagnement des équipes",
-        'Description' => "Interventions sur site, Stages APN, Ouvrage, Formation des personnes ressources, Remobiliser les classes difficiles",
+        'Description' => "Interventions sur site, Stages APN, Ouvrage, "
+            . "Formation des personnes ressources, Remobiliser les classes "
+            . "difficiles",
         'Referent' => "Michel",
         'Visible' => 1),
     '110' => array(
@@ -133,7 +139,8 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '119' => array(
         'Intitulé' => "PARMI",
-        'Description' => "Adaptation de ressources pédagogiques EPA à l'EAT (financement Agropolis Fondation)",
+        'Description' => "Adaptation de ressources pédagogiques EPA à l'EAT "
+            . "(financement Agropolis Fondation)",
         'Referent' => "Aurélie",
         'Visible' => 1),
     '200' => array(
@@ -158,7 +165,8 @@ $GLOBALS['actions'] = array(
         'Visible' => 0),
     '204' => array(
         'Intitulé' => "SNA - EDD : Eco-délégués, site EDD",
-        'Description' => "Culture partagée, pilotage (ex Professionnalisation acteurs SNA)",
+        'Description' => "Culture partagée, pilotage (ex Professionnalisation "
+        . "acteurs SNA)",
         'Referent' => "Orane",
         'Visible' => 1),
     '205' => array(
@@ -168,7 +176,8 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '206' => array(
         'Intitulé' => "SNA - RESEDA Actions (hors regroupement)",
-        'Description' => "actions dont Bouc émissaire, lutte contre les discriminations",
+        'Description' => "actions dont Bouc émissaire, lutte contre les "
+        . "discriminations",
         'Referent' => "Claire P.",
         'Visible' => 1),
     '207' => array(
@@ -183,7 +192,9 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '209' => array(
         'Intitulé' => "SNA – Accompagnement des référents EPA",
-        'Description' => "EPA hors PNF : GIEE, ARIA (ex Coordination de réseaux thématiques)",
+        'Description' =>
+            "EPA hors PNF : GIEE, ARIA (ex Coordination de "
+            . "réseaux thématiques)",
         'Referent' => "Roger",
         'Visible' => 1),
     '210' => array(
@@ -212,13 +223,17 @@ $GLOBALS['actions'] = array(
         'Referent' => "Patrick M.",
         'Visible' => 0),
     '215' => array(
-        'Intitulé' => "SNA - Appui pédagogique pour l'enseignement supérieur agricole",
+        'Intitulé' =>
+            "SNA - Appui pédagogique pour l'enseignement supérieur "
+            . "agricole",
         'Description' => "",
         'Referent' => "Loïc",
         'Visible' => 0),
     '216' => array(
         'Intitulé' => "SNA - Actions régionales d'appui à l'EA",
-        'Description' => "Appui à l'Enseignement Agricole dans les régions en métropole",
+        'Description' =>
+            "Appui à l'Enseignement Agricole dans les régions en "
+            . "métropole",
         'Referent' => "",
         'Visible' => 1),
     '217' => array(
@@ -242,7 +257,8 @@ $GLOBALS['actions'] = array(
         'Referent' => "Abdel",
         'Visible' => 0),
     '221' => array(
-        'Intitulé' => "SNA – Accompagner les réseaux dans leurs activités de coopération  internationale",
+        'Intitulé' => "SNA – Accompagner les réseaux dans leurs activités de "
+            . "coopération  internationale",
         'Description' => "",
         'Referent' => "Abdel",
         'Visible' => 0),
@@ -253,12 +269,18 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '223' => array(
         'Intitulé' => "SNA - POLLEN",
-        'Description' => "Valorisation des innovations dans l'EA : participation au comité interENA, réalisation de contenus à valoriser sur un site Internet.",
+        'Description' => "Valorisation des innovations dans l'EA : "
+            . "participation au comité "
+            . "interENA, réalisation de contenus à valoriser sur un site "
+            . "Internet.",
         'Referent' => "Bruno",
         'Visible' => 1),
     '224' => array(
         'Intitulé' => "SNA - Expérimentation violence et discrimination",
-        'Description' => "Recherche action sur les phénomènes de violence et de discrimination pour favoriser le \"bien vivre ensemble\" dans les EPL : Etat des lieux, expérimentations et évaluation ",
+        'Description' =>
+            "Recherche action sur les phénomènes de violence et de "
+            . "discrimination pour favoriser le \"bien vivre ensemble\" dans "
+            . "les EPL : Etat des lieux, expérimentations et évaluation ",
         'Referent' => "Alain M.",
         'Visible' => 1),
     '300' => array(
@@ -313,12 +335,16 @@ $GLOBALS['actions'] = array(
         'Visible' => 0),
     '403' => array(
         'Intitulé' => "CASDAR Cap Vert",
-        'Description' => "Innovation agroécologique dans les groupes. Partenariat FN CUMA",
+        'Description' =>
+            "Innovation agroécologique dans les groupes. "
+            . "Partenariat FN CUMA",
         'Referent' => "Roger",
         'Visible' => 1),
     '404' => array(
         'Intitulé' => "CASDAR Stratégie",
-        'Description' => "Les démarches stratégiques dans le conseil et la formation agricoles au service du projet « produisons autrement »",
+        'Description' =>
+            "Les démarches stratégiques dans le conseil et la formation "
+            . "agricoles au service du projet « produisons autrement »",
         'Referent' => "Nathalie B",
         'Visible' => 1),
     '405' => array(
@@ -333,12 +359,15 @@ $GLOBALS['actions'] = array(
         'Visible' => 0),
     '407' => array(
         'Intitulé' => "CASDAR Muscari",
-        'Description' => "Contribuer à une meilleure appropriation de la biodiversité dite « ordinaire » par les producteurs",
+        'Description' =>
+            "Contribuer à une meilleure appropriation de la biodiversité "
+            . "dite « ordinaire » par les producteurs",
         'Referent' => "Marie-Claire",
         'Visible' => 1),
     '408' => array(
         'Intitulé' => "Les cordées de la réussite",
-        'Description' => "Favoriser l'accès à l'enseignement supérieur des jeunes",
+        'Description' =>
+            "Favoriser l'accès à l'enseignement supérieur des jeunes",
         'Referent' => "Thierry",
         'Visible' => 1),
     '500' => array(
@@ -388,22 +417,28 @@ $GLOBALS['actions'] = array(
         'Visible' => 0),
     '604' => array(
         'Intitulé' => "International : Leonardo AGRIDIAG",
-        'Description' => "Transfert de Dialecte en Hongrie, au Portugal et utilisation en pédagogie.",
+        'Description' =>
+            "Transfert de Dialecte en Hongrie, au Portugal et utilisation en "
+            . "pédagogie.",
         'Referent' => "Guy",
         'Visible' => 0),
     '605' => array(
         'Intitulé' => "International : Leonardo SAGITER",
-        'Description' => "Développement de l'innovation : Savoirs agro-écologiques.",
+        'Description' =>
+            "Développement de l'innovation : Savoirs agro-écologiques.",
         'Referent' => "Marie-Laure",
         'Visible' => 1),
     '606' => array(
         'Intitulé' => "International : Leonardo Strat' training",
-        'Description' => "Transfert d'innovation : performance globale des exploitations",
+        'Description' =>
+            "Transfert d'innovation : performance globale des exploitations",
         'Referent' => "Nathalie B",
         'Visible' => 1),
     '607' => array(
         'Intitulé' => "Life + : MIL'OUV",
-        'Description' => "Milieux ouverts agro-pastoraux et biodiversité. Partenariat PNC, IDELE et CEN LR",
+        'Description' =>
+            "Milieux ouverts agro-pastoraux et biodiversité. Partenariat PNC, "
+            . "IDELE et CEN LR",
         'Referent' => "Nathalie B",
         'Visible' => 1),
     '608' => array(
@@ -438,12 +473,15 @@ $GLOBALS['actions'] = array(
         'Visible' => 1),
     '803' => array(
         'Intitulé' => "MOOC WINE",
-        'Description' => "Introduction aux techniques de viticulture et vinicultureIntroduction aux techniques de viticulture et viniculture",
+        'Description' =>
+            "Introduction aux techniques de viticulture et viniculture"
+            . "Introduction aux techniques de viticulture et viniculture",
         'Referent' => "Christian",
         'Visible' => 1),
     '804' => array(
         'Intitulé' => "MOOC Ensemble",
-        'Description' => "Vivre ensemble les valeurs de la républiqueVivre ensemble les valeurs de la république",
+        'Description' => "Vivre ensemble les valeurs de la républiqueVivre "
+        . "ensemble les valeurs de la république",
         'Referent' => "Alain P",
         'Visible' => 0),
 
