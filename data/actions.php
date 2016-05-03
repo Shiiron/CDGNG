@@ -164,9 +164,8 @@ $GLOBALS['actions'] = array(
         'Referent' => "",
         'Visible' => 0),
     '204' => array(
-        'Intitulé' => "SNA - EDD : Eco-délégués, site EDD",
-        'Description' => "Culture partagée, pilotage (ex Professionnalisation "
-        . "acteurs SNA)",
+        'Intitulé' => "SNA - EDD DD citoyenneté, site EDD",
+        'Description' => "Soutenir l'engagement éco-citoyen des jeunes",
         'Referent' => "Orane",
         'Visible' => 1),
     '205' => array(
@@ -282,6 +281,17 @@ $GLOBALS['actions'] = array(
             . "discrimination pour favoriser le \"bien vivre ensemble\" dans "
             . "les EPL : Etat des lieux, expérimentations et évaluation ",
         'Referent' => "Alain M.",
+        'Visible' => 1),
+    '226' => array(
+        'Intitulé' => "SNA - EPA articles",
+        'Description' => "Coordination d'écriture d'articles EPA",
+        'Referent' => "Roger",
+        'Visible' => 1),
+    '227' => array(
+        'Intitulé' => "SNA - Innovation, Numérique éducatif",
+        'Description' => "Valorisation des innovations dans l'EA (volet "
+            . "pédagogique et didactique)",
+        'Referent' => "Hélène",
         'Visible' => 1),
     '300' => array(
         'Intitulé' => "PNF - Gestion et Prospective",
