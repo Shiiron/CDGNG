@@ -1,16 +1,17 @@
 <?php
+namespace CDGNG;
 
-require("php/ical.class.php");
-require("php/event.class.php");
+require_once('app/Ical.php');
 
+use \Ical;
 
 /**
  * Class Calendar
- * 
+ *
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
- * 
+ *
  * @version GIT: $Id$
- *  
+ *
  */
 class Calendar{
 
@@ -45,10 +46,10 @@ class Calendar{
 
     /**
      * Parse calendar and check events
-     * 
+     *
      * @param timestamp $ts_start time slot start
      * @param timestamp $ts_end time slot end
-     */ 
+     */
 
     function parse($ts_start, $ts_end){
         $ical = new ical();
@@ -57,14 +58,14 @@ class Calendar{
         $tab_events = array();
 
         foreach ($ical->get_sort_event_list() as $event_desc) {
-            
+
             $event = new Event($event_desc);
 
             // Event is in time slot and not a full day event
             if (($event->getStart() >= $ts_start)
                 and ($event->getEnd() <= $ts_end)
                 and !$event->isFullDay()) {
-                
+
                 if($event->isValid($tab_events, $error)){
                     if ($event->isSelected()) {
                         array_push($tab_events, $event);
@@ -81,10 +82,10 @@ class Calendar{
 
     /**
      * Add event to valid event array
-     * 
+     *
      * @param Event $event Event to add
      */
-    
+
     private function addEvent($event){
         $code = $event->getCode();
         $result = $event->cutByDay();
@@ -102,11 +103,11 @@ class Calendar{
 
     /**
      * Add error to error array
-     * 
+     *
      * @param int    $level         Error level (0-2)
      * @param Event  $event         Unvalid event
      * @param string $description   Error description
-     * 
+     *
      */
     function addToError($level, $event, $description) {
         $this->errors[] = array(
@@ -120,7 +121,7 @@ class Calendar{
 
     /**
      * Return calendar name from calendar file (X-WR-CALNAME field)
-     * 
+     *
      * @return string
      */
     function getName(){
@@ -132,7 +133,7 @@ class Calendar{
             case 'day':
                 return $this->getDataBy("Y/m/d");
                 break;
-            
+
             case 'week':
                 return $this->getDataBy("Y/W");
                 break;
@@ -148,14 +149,14 @@ class Calendar{
             default:
                 return $this->getDataBy("All");
                 break;
-        }   
+        }
     }
 
     /**
      * return data grouped by slot time
-     * 
+     *
      * @param string $format Use date(format) cf. http://php.net/manual/en/function.date.php
-     * 
+     *
      * @return array
      */
     private function getDataBy($format){
@@ -173,7 +174,7 @@ class Calendar{
                 $output[$slot]['duration'] = 0;
 
             foreach ($dayCodes as $action => $subCode) {
-                
+
                 foreach ($subCode as $modalite => $duration) {
                     if (isset($output[$slot]['actions'][$action][$modalite])) {
                         $output[$slot]['actions'][$action][$modalite] += $duration;
@@ -204,7 +205,7 @@ class Calendar{
     }
 
     function getRealised(){
-        
+
     }
 
     /**
@@ -227,6 +228,4 @@ class Calendar{
     function getErrors(){
         return $this->errors;
     }
-
-
 }

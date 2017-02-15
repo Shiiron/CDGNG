@@ -1,9 +1,10 @@
 <?php
+namespace CDGNG;
 
-class CSV {
+class Csv {
 
     private $csv = Null;
-    
+
     /**
     * Add a new line to csv file.
     *
@@ -22,7 +23,7 @@ class CSV {
 
     /**
     * Make CSV data from array
-    * 
+    *
     * @param array $array Array to transform.
     */
     function Array2CSV($array){

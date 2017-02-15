@@ -1,21 +1,25 @@
 <?php
 /**
  * index file
- * 
+ *
  * @author Loris Puech
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
- * 
+ *
  * @version GIT: $Id$
- *  
+ *
  */
+namespace CDGNG;
 
+if (!is_dir('vendor')) {
+    print('Vous devez executer "composer install" dans le dossier de la Ferme.');
+    exit;
+}
+$loader = require __DIR__ . '/vendor/autoload.php';
 
-include "./php/model.class.php";
-include "./php/view.class.php";
 include "./data/actions.php";
 include "./data/modalites.php";
 
-$model = new Model("./config.php");
+$model = new Model("config.php");
 $view = new View($model);
 
 $action = "";
@@ -25,8 +29,8 @@ if (isset($_POST["action"]))
 switch ($action) {
 	case "Show":
 		if(isset($_POST["ics"]))
-			$view->showResults($_POST["ics"], 
-							   $_POST["startDate"], 
+			$view->showResults($_POST["ics"],
+							   $_POST["startDate"],
 							   $_POST["endDate"],
 							   $_POST["export"]);
 		else
@@ -55,7 +59,7 @@ switch ($action) {
 	case "tableauAction":
 		$view->exportTableauCDG("actions", isset($_POST["showArchived"]));
 		break;
-	
+
 	case "tableauModalite":
 		$view->exportTableauCDG("modalites");
 		break;

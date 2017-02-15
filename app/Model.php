@@ -1,13 +1,12 @@
 <?php
-
-require "php/calendar.class.php";
+namespace CDGNG;
 
 /**
  * Class Model
  *
  * @author Loris Puech
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
- * 
+ *
  * @version GIT: $Id$
  */
 class Model {
@@ -18,7 +17,7 @@ class Model {
 
 	/**
 	 * Constructeur
-	 * 
+	 *
 	 * @param string $config_path Path to config file
 	 */
 	function __construct($config_path) {
@@ -28,7 +27,7 @@ class Model {
 
 	/**
 	 * Load calendars list
-	 * 
+	 *
 	 * @return array Calendars list
 	 */
 	function getCalList() {
@@ -56,9 +55,9 @@ class Model {
 
 	/**
 	 * Make timestamp from date string (start of day)
-	 * 
+	 *
 	 * @param string $str date as string
-	 * 
+	 *
 	 * @return int timestamp
 	 */
 	function strToTime($str) {
@@ -68,9 +67,9 @@ class Model {
 
 	/**
 	 * Make timestamp from date string (End of day)
-	 * 
-	 * @param string $str date as string 
-	 * 
+	 *
+	 * @param string $str date as string
+	 *
 	 * @return int timestamp
 	 */
 	function strToTime_EndDate($str) {
@@ -81,10 +80,10 @@ class Model {
 
 	/**
 	 * Analyse one or more calendars
-	 * 
+	 *
 	 * @param string $cal_path Path to calendar
 	 * @param int    $ts_start Start of event timestamp
-	 * @param int 	 $ts_end   End of event timestamp 
+	 * @param int 	 $ts_end   End of event timestamp
 	 */
 	function analyseCal($cal_path, $ts_start, $ts_end) {
 		//Reset tab
@@ -96,7 +95,7 @@ class Model {
 		$ts_start = $this->strToTime($ts_start);
 		$ts_end = $this->strToTime_EndDate($ts_end);
 
-		//Parse each calendar		
+		//Parse each calendar
 		foreach ($cal_path as $path) {
 			$cal = new Calendar($path);
 			$name = $cal->getname();
@@ -104,15 +103,15 @@ class Model {
 			$this->calendars[$name]->parse($ts_start, $ts_end);
 		}
 	}
-	
+
 	/**
 	 * Returns errors for all calendars
-	 * 
+	 *
 	 * @return array All calendars errors
 	 */
 	function getErrors(){
 		$output = array();
-		foreach ($this->calendars as $name => $calendar) {	
+		foreach ($this->calendars as $name => $calendar) {
 			$output[$calendar->getName()] = $calendar->getErrors();
 		}
 		return $output;
@@ -120,7 +119,7 @@ class Model {
 
 	/**
 	 * Return calendar's data
-	 * 
+	 *
 	 * @param string $type Result by action or by modalites (byAction, byModalite)
 	 * @param string $slot define time slot (day, week, month, year, all)
 	 * @param bool $fusion Définis si il faut fusionner les données des différents calendriers
@@ -129,7 +128,7 @@ class Model {
 	function getData($slot = "All", $fusion = false){
 		$output = array();
 		if(!$fusion){
-			foreach ($this->calendars as $name => $calendar) {	
+			foreach ($this->calendars as $name => $calendar) {
 				$output[$calendar->getName()] = $calendar->getData($slot);
 				$output[$calendar->getName()]['duration'] = $calendar->getTotalLength();
 			}
@@ -138,16 +137,16 @@ class Model {
 		}
 		return $output;
 	}
-	
+
 	/**
 	 * Calculate sum of duration of all valid events
-	 * 
-	 * @return int Duration of all valid events for all selected calendars 
+	 *
+	 * @return int Duration of all valid events for all selected calendars
 	 */
 	function getTotal(){
 		$total = 0;
 
-		foreach ($this->calendars as $name => $calendar) {	
+		foreach ($this->calendars as $name => $calendar) {
 			$total += $calendar->getTotalLength();
 		}
 		return $total;
@@ -155,12 +154,12 @@ class Model {
 
 	/**
 	 * Return name of selected calendars
-	 * 
+	 *
 	 * @return string
 	 */
 	function GetName(){
 		$output = "";
-		foreach ($this->calendars as $name => $calendar) {	
+		foreach ($this->calendars as $name => $calendar) {
 			$output .= $calendar->getName()."+";
 		}
 		return substr($output, 0, -1);

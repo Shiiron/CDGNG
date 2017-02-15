@@ -1,13 +1,12 @@
 <?php
-
-require('php/csv.class.php');
+namespace CDGNG;
 
 /**
  * Class View
- * 
+ *
  * @author Loris Puech
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
- * 
+ *
  * @version GIT: $Id$
  */
 class View
@@ -18,17 +17,17 @@ class View
     /**
      * Constructor
      */
-    public function __construct($model) 
-    {  
+    public function __construct($model)
+    {
         $this->model = $model;
     }
 
     /************************************************************************
      * Show Form
      ************************************************************************/
-    public function showForm() 
+    public function showForm()
     {
-        include("php/views/form.phtml");
+        include("app/views/form.phtml");
     }
 
     /**
@@ -37,16 +36,16 @@ class View
      * @param
      * @param
      */
-    public function showResults($cal_path, $ts_start, $ts_end, $slotTime = "All") 
+    public function showResults($cal_path, $ts_start, $ts_end, $slotTime = "All")
     {
         if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
             list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
-            
+
         $this->model->analyseCal($cal_path, $ts_start, $ts_end);
         $total = $this->model->getTotal();
         $errors = $this->model->getErrors();
-    
-        include("php/views/result.phtml");
+
+        include("app/views/result.phtml");
     }
 
     /**
@@ -56,7 +55,7 @@ class View
      */
     public function exportTableauCDG($data, $show_archived = TRUE)
     {
-        
+
         $tab = $GLOBALS[$data];
 
         $csv = new CSV();
@@ -67,11 +66,11 @@ class View
             if (!isset($tab_code['Visible']) || $tab_code['Visible'] == 1
                                              || $show_archived) {
                 $row = array(
-                    $code, 
-                    $tab_code["Intitulé"], 
+                    $code,
+                    $tab_code["Intitulé"],
                     $tab_code["Description"]
                 );
-                
+
                 $csv->Insert($row);
             }
         }
@@ -81,7 +80,7 @@ class View
 
     /**
      * print data by period in a certain order
-     * 
+     *
      * @param string $type show result per actions or per modalites
      * @param string $slot define slot time : day, week, year, month, All
      */
@@ -125,14 +124,14 @@ class View
 
 
     /**
-     * 
-     * 
+     *
+     *
      */
     public function showCsv($paths, $ts_start, $ts_end, $slot = "All")
     {
         if ($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
             list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
-            
+
         $this->model->analyseCal($paths, $ts_start, $ts_end);
 
         $calendar_name = $this->model->getName();
@@ -140,19 +139,19 @@ class View
         $data = $this->model->getData($slot);
 
         switch ($slot) {
-            case 'day':     
-                $title = 'Date (YYYY/MM/DD)';  
+            case 'day':
+                $title = 'Date (YYYY/MM/DD)';
                 break;
-            case 'week':    
-                $title = 'Semaine (YYYY/SS)';  
+            case 'week':
+                $title = 'Semaine (YYYY/SS)';
                 break;
-            case 'month':   
-                $title = 'Mois (YYYY/MM)';     
+            case 'month':
+                $title = 'Mois (YYYY/MM)';
                 break;
-            case 'year':    
+            case 'year':
                 $title = 'Année';
                 break;
-            default:        
+            default:
                 $title = '';
         }
 
@@ -160,30 +159,30 @@ class View
 
         // Headers
         $header = array('Nom', 'Actions', 'Modalités', 'Temps(Min)');
-        if ($title != "") 
+        if ($title != "")
             array_splice($header, 1, 0, $title);
-        
+
         $csv->Insert($header);
 
         foreach ($data as $calName => $calData) {
             foreach ($calData as $slotName => $slotData) {
-                if ($slotName == 'duration') 
+                if ($slotName == 'duration')
                     continue;
                 //Parcours les codes (actions)
                 ksort($slotData['actions']);
                 foreach ($slotData['actions'] as $code => $subData) {
-                    if ($code == 'duration') 
+                    if ($code == 'duration')
                         continue;
                     //Parcours les souscodes (modalités)
                     ksort($subData);
                     foreach ($subData as $subCode => $duration) {
-                        if ($subCode == 'duration') 
+                        if ($subCode == 'duration')
                             continue;
 
                         $row = array($calName, $code, $subCode, $duration/60);
-                        if ($title != "") 
+                        if ($title != "")
                             array_splice($row, 1, 0, $slotName);
-                        
+
                         $csv->Insert($row);
                     }
                 }
@@ -193,17 +192,17 @@ class View
         $csv->Output($calendar_name);
     }
 
-    public function showRealised($paths, $date) 
+    public function showRealised($paths, $date)
     {
         $year = (int)explode('-', $date)[2];
         $month = (int)explode('-', $date)[1];
 
-        if ($month <= 8) 
+        if ($month <= 8)
             $year -= 1;
-            
+
         $ts_start = "01-09-".($year);
         $ts_end = "31-08-".($year + 1);
-        
+
 
         $this->model->analyseCal($paths, $ts_start, $ts_end);
         $calendar_name = $this->model->getName();
@@ -215,7 +214,7 @@ class View
 
         // Headers
         $header = array(
-            'Septembre', '', '', 'Octobre', '', '', 'Novembre', '', '', 
+            'Septembre', '', '', 'Octobre', '', '', 'Novembre', '', '',
             'Décembre', '', '', 'Janvier', '', '', 'Février', '', '',
             'Mars', '', '', 'Avril', '', '', 'Mai', '', '',
             'Juin', '', '', 'Juillet', '', '', 'Aout', '', '',
@@ -227,8 +226,8 @@ class View
         );
 
         $months = array(9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8);
-        
-        $csv->Insert($header);  
+
+        $csv->Insert($header);
 
         for ($day=1; $day <= 31; $day++) {
             $row = array();
@@ -240,7 +239,7 @@ class View
                 $date = date("Y/m/d", $timestamp);
                 $add = array();
                 // Vérifie si le jour existe dans le mois.
-                if (date("m", $timestamp) != $month) 
+                if (date("m", $timestamp) != $month)
                     $add = array('', '', '');
                 // Vérifie si des heures ont été contabilisée pour ce jour
                 else if (isset($data[$date]['duration']))
@@ -249,7 +248,7 @@ class View
                         $day_name[date("D", $timestamp)],
                         number_format($data[$date]['duration']/3600, 2, ',', ' ')
                     );
-                else 
+                else
                     $add = array($day, $day_name[date("D", $timestamp)], '');
 
                 $row = array_merge($row, $add);
@@ -261,9 +260,9 @@ class View
 
     /**
      * Print error list using template
-     * 
+     *
      * @param string $template template filename in /php/views/
-     * 
+     *
      */
     private function printError($template)
     {
@@ -274,12 +273,12 @@ class View
             }
         }
     }
-    
+
     /**
      * Second to hour round to two after dot.
-     * 
+     *
      * @param string $template template filename in /php/views/
-     * 
+     *
      */
     private function format($seconds)
     {

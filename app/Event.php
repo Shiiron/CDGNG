@@ -1,14 +1,15 @@
 <?php
+namespace CDGNG;
 
 /**
  * Class Event
- * 
+ *
  * @author Florestan Bredow <florestan.bredow@daiko.fr>
- * 
+ *
  * @version GIT: $Id$
- * 
+ *
  */
-class Event 
+class Event
 {
 
 	/*************************************************************************
@@ -26,9 +27,9 @@ class Event
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param array $event Event's description from ical Class
-	 * 
+	 *
 	 */
 	function __construct($event)
 	{
@@ -37,7 +38,7 @@ class Event
 
 	/**
 	 * Load event from ical class description array
-	 * 
+	 *
 	 * @param array $event Event's description from ical Class
 	 */
 	function load($event)
@@ -76,10 +77,10 @@ class Event
 
 	/**
 	 * check if event action code is in selection
-	 * 
+	 *
 	 * @return true or false.
 	 */
-	function isSelected() 
+	function isSelected()
 	{
 		if(in_array('Tous', $_POST['codes']))
 			return True;
@@ -94,10 +95,10 @@ class Event
 
 	/**
 	 * check if this is a full day event
-	 * 
+	 *
 	 * @return true or false.
 	 */
-	function isFullDay() 
+	function isFullDay()
 	{
 		if ($this->getLength() == 86400)
 			return true;
@@ -106,10 +107,10 @@ class Event
 
 	/**
 	 * check if event is valid
-	 * 
+	 *
 	 * @param array $events Array of events object to check superposed
 	 * @param array $error  writable to return error on unvalid event
-	 * 
+	 *
 	 * @return true or false.
 	 */
 	function isValid($events, &$error) {
@@ -172,7 +173,7 @@ class Event
 
 	/**
 	 * Check if two events are overlapping
-	 * 
+	 *
 	 * @param Event $event Event object like this
 	 */
 	private function isOverlap($event){
@@ -186,12 +187,12 @@ class Event
 
 	/**
 	 * Return Code of event
-	 * 
+	 *
 	 * @return array {"modalite" => "X", "action" => "ZZZ"}
 	 */
 	function getCode(){
 
-		if(!preg_match(	
+		if(!preg_match(
 			'#\[(?<code>[0-9]+[A-z])\]#', $this->getSummary(), $tab_matches)) {
 			return false;
 		}
@@ -233,7 +234,7 @@ class Event
 	}
 
 	/**
-	 * 
+	 *
 	 * @todo
 	 *
 	 */
@@ -263,6 +264,6 @@ class Event
 
 	}
 
-	
+
 
 }
