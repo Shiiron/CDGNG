@@ -9,5 +9,9 @@
             "email": "florestan.bredow@supagro.fr"
         }
     ],
-    "require": {}
+    "autoload": {
+        "psr-4": {
+          "CDGNG\\": "app"
+        }
+    }
 }
