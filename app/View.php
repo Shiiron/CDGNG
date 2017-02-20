@@ -58,7 +58,7 @@ class View
 
         $tab = $GLOBALS[$data];
 
-        $csv = new CSV();
+        $csv = new Csv();
         $csv->Insert(array('Code', 'Intitulé', 'Description'));
 
         foreach ($tab as $code => $tab_code) {
@@ -155,7 +155,7 @@ class View
                 $title = '';
         }
 
-        $csv = new CSV();
+        $csv = new Csv();
 
         // Headers
         $header = array('Nom', 'Actions', 'Modalités', 'Temps(Min)');
@@ -210,7 +210,7 @@ class View
         // On ne prend en compte que le premier élément.
         $data = reset($data);
 
-        $csv = new CSV();
+        $csv = new Csv();
 
         // Headers
         $header = array(
