@@ -1,10 +1,6 @@
 <?php
 namespace CDGNG;
 
-require_once('app/Ical.php');
-
-use \Ical;
-
 /**
  * Class Calendar
  *
@@ -52,12 +48,11 @@ class Calendar{
      */
 
     function parse($ts_start, $ts_end){
-        $ical = new ical();
-        $ical->parse($this->path);
+        $calendar = new Parser\Calendar($this->path);
+        $calendar->parse();
 
         $tab_events = array();
-
-        foreach ($ical->get_sort_event_list() as $event_desc) {
+        foreach ($calendar->events as $event_desc) {
 
             $event = new Event($event_desc);
 
