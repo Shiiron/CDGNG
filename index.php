@@ -27,7 +27,7 @@ if (isset($_POST["action"]))
 	$action = $_POST["action"];
 
 switch ($action) {
-	case "Show":
+    case "Show":
 		if(isset($_POST["ics"]))
 			$view->showResults($_POST["ics"],
 							   $_POST["startDate"],
@@ -65,6 +65,7 @@ switch ($action) {
 		break;
 
 	default:
-		$view->showForm();
-		break;
+        $view = new Views\Main($model);
+        $view->show();
+        break;
 }

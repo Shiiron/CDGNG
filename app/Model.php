@@ -40,7 +40,7 @@ class Model {
 				if (substr_compare($entry, ".ics", -4, 4, TRUE) == 0) {
 					$path = $this->config['calendars_path'] . $entry;
 					if (is_file($path)) {
-						$result[] = $path;
+						$result[basename($path, '.ics')] = $path;
 					}
 				}
 			}
@@ -48,7 +48,7 @@ class Model {
 		}
 
 		//Tri du tableau
-		sort($result, SORT_STRING);
+		ksort($result);
 
 		return $result;
 	}

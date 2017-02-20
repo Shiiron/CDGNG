@@ -12,7 +12,11 @@
     "autoload": {
         "psr-4": {
           "CDGNG\\": "app",
-          "CDGNG\\Parser\\": "app/parser"
+          "CDGNG\\Parser\\": "app/Parser",
+          "CDGNG\\Views\\": "app/Views"
         }
+    },
+    "require": {
+        "twig/twig": "^2.1"
     }
 }
