@@ -22,8 +22,6 @@ include "./data/modalites.php";
 $model = new Model("config.php", $GLOBALS['actions'], $GLOBALS['modalites']);
 $model->loadCalendarsList();
 
-$view = new View($model);
-
 $action = "";
 if (isset($_POST["action"])) {
     $action = $_POST["action"];
@@ -78,9 +76,17 @@ switch ($action) {
         break;
 
     case "Realised":
-        $_POST['codes'] = array('Tous');
         if (isset($_POST["ics"])) {
-            $view->showRealised($_POST["ics"], $_POST["date"]);
+            $_POST['codes'] = array('Tous');
+            $stat = new Statistics\Realised($_POST["date"]);
+            foreach ($_POST["ics"] as $calName) {
+                $stat->add($model->calendars[$calName]);
+            }
+            $view = new Views\CsvView(
+                $stat->title . '_realised.csv',
+                $stat->exportAsCsv()
+            );
+            $view->show();
             break;
         }
         print ("Aucun fichier n'a été sélectionné");
