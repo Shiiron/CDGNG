@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>CDG : Analyseur de calendrier</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="themes/default/css/bootstrap.min.css">
+  <link rel="stylesheet" href="themes/default/css/bootstrap-responsive.min.css">
+  <link rel="stylesheet" href="themes/default/css/style.css">
+</head>
+<body>
+  <div class="container-fluid">
+  <h2>
+      Calendriers : {{ statistics.title }}
+  </h2>
+
+  <h3>
+      {{ statistics.dtstart|date("d-m-Y") }}
+      au {{ statistics.end|date("d-m-Y") }}
+      ({{ (statistics.length/3600)|round }}h)
+  </h3>
+
+  <!-- Gestion de l'export sur la page de résultat -->
+  <form method="post" action="index.php">
+    <a class="btn btn-primary" href="index.php">Retour</a>
+    <select name="ics[]" multiple="multiple" class="hidden">
+      {% for calendar in statistics.calendars %}
+      <option selected name="ics" value="{{ calendar.calendar.name }}">{{ calendar.calendar.name }}</option>
+      {% endfor %}
+      </select>
+    <select name="export" class="hidden">
+      <option selected name="export" value="Total">Total</option>
+    </select>
+    <input name="startDate" class ="hidden" value="{{ statistics.dtstart|date("d-m-Y") }}" />
+    <input name="endDate" class="hidden" value="{{ statistics.end|date("d-m-Y") }}" />
+    <button id="export" class="btn btn-info" type="submit" name="action" value="Exporter">
+      <i class="icon-download-alt icon-white"></i> Exporter
+    </button>
+  </form>
+
+  <ul class="nav nav-tabs" id="myTab">
+    <li class="active"><a href="#Actions" data-toggle="tab">Résultat par Action</a></li>
+    <li><a href="#Modalites" data-toggle="tab">Résultat par Modalité</a></li>
+    <li><a href="#Erreurs" data-toggle="tab">Erreurs</a></li>
+  </ul>
+
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane in active" id="Actions">
+      <div class="row">
+        <div class="span6 well">
+        {% for calendar in statistics.calendars %}
+          <h3>{{ calendar.calendar.name}} ({{ calendar.calendar.length/3600|round }}h)</h3>
+          {% for slotName,slot in calendar.data %}
+            {% if slotName != 'duration' %}
+            <h4>{{ slotName }} ({{ slot.duration/3600|round }}h)</h4>
+              {% for actionName,action in slot.actions %}
+                {% if actionName != 'duration' %}
+                  {{ actionName }} : {{ actions[actionName]['Intitulé'] }} ({{ action.duration/3600|round }}h)
+                  <ul>
+                    {% for modeName,modeLength in action %}
+                      {% if modeName != 'duration' %}
+                      <li> {{ modeName }} : {{ modes[modeName]['Intitulé'] }} ({{ modeLength/3600|round }}h)</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="Modalites">
+      <div class="row">
+        <div class="span6 well">
+          {% for calendar in statistics.calendars %}
+            <h3>{{ calendar.calendar.name}} ({{ calendar.calendar.length/3600|round }}h)</h3>
+            {% for slotName,slot in calendar.data %}
+              {% if slotName != 'duration' %}
+              <h4>{{ slotName }} ({{ slot.duration/3600|round }}h)</h4>
+                {% for modeName,mode in slot.modes %}
+                  {% if modeName != 'duration' %}
+                    {{ modeName }} : {{ modes[modeName]['Intitulé'] }} ({{ mode.duration/3600|round }}h)
+                    <ul>
+                      {% for actionName,actionLength in mode %}
+                        {% if actionName != 'duration' %}
+                        <li> {{ actionName }} : {{ actions[actionName]['Intitulé'] }} ({{ actionLength/3600|round }}h)</li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="Erreurs">
+      <ul class="inline">
+          <li><input type="checkbox" checked id="simpleError"/>Infos</li>
+          <li><input type="checkbox" checked id="seriousError"/>Avertissements</li>
+          <li><input type="checkbox" checked id="warningError"/>Erreurs</li>
+      </ul>
+
+      <div class="well">
+        <ul>
+        {% for calName,calendar in errors %}
+          {% for error in calendar %}
+          <li class="errorLvl{{ error.LEVEL }}">
+            {{ calName }} : {{ error.SUMMARY }} : {{ error.DTSTART }} - {{ error.DTEND }} : {{ error.DESCRIPTION }}
+          </li>
+          {% endfor %}
+        {% endfor %}
+        </ul>
+      </div>
+  </div>
+  <a class="btn btn-primary" href="index.php">Retour</a>
+</div>
+
+<script type="text/javascript" src="themes/default/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="themes/default/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $('#simpleError').click(function () {
+        if($('#simpleError').is(':checked')){
+            $('.errorLvl0').css('display','list-item');
+        } else {
+            $('.errorLvl0').css('display','none');
+        }
+    });
+
+    $('#seriousError').click(function () {
+        if($('#seriousError').is(':checked')){
+            $('.errorLvl1').css('display','list-item');
+        } else {
+            $('.errorLvl1').css('display','none');
+        }
+    });
+
+    $('#warningError').click(function () {
+        if($('#warningError').is(':checked')){
+            $('.errorLvl2').css('display','list-item');
+        } else {
+            $('.errorLvl2').css('display','none');
+        }
+    });
+</script>
+
+</body>
+</html>

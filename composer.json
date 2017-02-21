@@ -1,0 +1,23 @@
+{
+    "name": "supagroflorac/cdgng",
+    "description": "Statistique sur les calendriers ICS (avec des codes)",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Florestan Bredow",
+            "email": "florestan.bredow@supagro.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "CDGNG\\": "app",
+          "CDGNG\\Parser\\": "app/Parser",
+          "CDGNG\\Views\\": "app/Views",
+          "CDGNG\\Statistics\\": "app/Statistics"
+        }
+    },
+    "require": {
+        "twig/twig": "^2.1"
+    }
+}
