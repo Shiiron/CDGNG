@@ -22,32 +22,6 @@ class View
         $this->model = $model;
     }
 
-    /************************************************************************
-     * Show Form
-     ************************************************************************/
-    public function showForm()
-    {
-        include("app/views/form.phtml");
-    }
-
-    /**
-     * Show Result as HTML
-     *
-     * @param
-     * @param
-     */
-    public function showResults($cal_path, $ts_start, $ts_end, $slotTime = "All")
-    {
-        if($this->model->strToTime($ts_end) < $this->model->strToTime($ts_start))
-            list($ts_start,$ts_end) = array($ts_end,$ts_start); //swap
-
-        $this->model->analyseCal($cal_path, $ts_start, $ts_end);
-        $total = $this->model->getTotal();
-        $errors = $this->model->getErrors();
-
-        include("app/views/result.phtml");
-    }
-
     /**
      * Export data array
      * @param string $data array name to export
@@ -77,51 +51,6 @@ class View
 
         $csv->output($data);
     }
-
-    /**
-     * print data by period in a certain order
-     *
-     * @param string $type show result per actions or per modalites
-     * @param string $slot define slot time : day, week, year, month, All
-     */
-    private function printCalendar($type = "actions", $slot = "All")
-    {
-        $data = $this->model->getData($slot);
-
-        if($type == "actions") {
-            $type2 = 'modalites';
-        } else {
-            $type = 'modalites';
-            $type2 = 'actions';
-        }
-        //Parcours les calendriers
-        foreach ($data as $calName => $calData) {
-            print("<h3>"."$calName (".$this->format($calData['duration'])."h) </h3>");
-            //Parcours les périodes (jours, semaines, mois, années)
-            foreach ($calData as $slotName => $slotData) {
-                if($slotName == 'duration') continue;
-                print("<h4>"."$slotName (".$this->format($slotData['duration'])."h)</h4>");
-                ksort($slotData[$type]);
-                //Parcours les codes (actions)
-                foreach ($slotData[$type] as $code => $subData) {
-                    if($code == 'duration') continue;
-                    print($code ." : ".$GLOBALS[$type][$code]['Intitulé']
-                                ." (".$this->format($subData['duration'])."h)\n");
-                    print("<ul>");
-                    ksort($subData);
-                    //Parcours les souscodes (modalités)
-                    foreach ($subData as $subCode => $duration) {
-                        if($subCode == 'duration') continue;
-                        print("<li>".$subCode." : "
-                            .$GLOBALS[$type2][$subCode]['Intitulé']." ("
-                            .$this->format($duration)."h) </li>\n");
-                    }
-                    print("</ul>");
-                }
-            }
-        }
-    }
-
 
     /**
      *
@@ -257,32 +186,4 @@ class View
         }
         $csv->Output($calendar_name);
     }
-
-    /**
-     * Print error list using template
-     *
-     * @param string $template template filename in /php/views/
-     *
-     */
-    private function printError($template)
-    {
-        $errors = $this->model->getErrors();
-        foreach ($errors as $cal_name => $cal_errors) {
-             foreach ($cal_errors as $key => $value){
-                include("php/views/".$template);
-            }
-        }
-    }
-
-    /**
-     * Second to hour round to two after dot.
-     *
-     * @param string $template template filename in /php/views/
-     *
-     */
-    private function format($seconds)
-    {
-        return round(($seconds/3600), 2);
-    }
-
 }
