@@ -30,6 +30,7 @@ if (isset($_POST["action"])) {
 }
 switch ($action) {
     case "Show":
+    case "Export":
         if (isset($_POST["ics"])) {
             $tab = explode("-", $_POST["startDate"], 3);
             $dtstart = strtotime($tab[2] . "-" . $tab[1] . "-" . $tab[0]);
@@ -59,21 +60,18 @@ switch ($action) {
                 $stat->add($model->calendars[$calName]);
             }
 
-            $view = new Views\Results($model, $stat);
-            $view->show();
-            break;
-        }
-        print ("Aucun fichier n'a été sélectionné");
-        break;
+            if ($action === 'Show') {
+                $view = new Views\Results($model, $stat);
+            }
 
-    case "Export":
-        if (isset($_POST["ics"])) {
-            $view->showCsv(
-                $_POST["ics"],
-                $_POST["startDate"],
-                $_POST["endDate"],
-                $_POST["export"]
-            );
+            if ($action === 'Export') {
+                $view = new Views\CsvView(
+                    $stat->title . '.csv',
+                    $stat->exportAsCsv()
+                );
+            }
+
+            $view->show();
             break;
         }
         print ("Aucun fichier n'a été sélectionné");

@@ -7,4 +7,9 @@ class Year extends Statistic
     {
         return $calendar->getData('year');
     }
+
+    protected function getSlotName()
+    {
+        return('Année');
+    }
 }

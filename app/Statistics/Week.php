@@ -7,4 +7,9 @@ class Week extends Statistic
     {
         return $calendar->getData('week');
     }
+
+    protected function getSlotName()
+    {
+        return('Semaine (YYYY/SS)');
+    }
 }

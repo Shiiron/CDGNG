@@ -1,6 +1,8 @@
 <?php
 namespace CDGNG\Statistics;
 
+use CDGNG\Csv;
+
 abstract class Statistic
 {
     public $length = 0;
@@ -12,6 +14,7 @@ abstract class Statistic
     public $calendars = array();
 
     abstract protected function getData($calendar);
+    abstract protected function getSlotName();
 
     public function __construct($dtstart, $dtend)
     {
@@ -28,6 +31,31 @@ abstract class Statistic
             'data' => $this->getData($calendar),
         );
         $this->length += $calendar->length;
+    }
+
+    public function exportAsCsv()
+    {
+        $csv = new Csv();
+        $csv->insert(array('Nom', $this->getSlotName(), 'Actions', 'Modalités', 'Temps(Min)'));
+        foreach ($this->calendars as $calName => $calendar) {
+            foreach ($calendar['data'] as $slotName => $slot) {
+                if ($slotName === 'duration') {
+                    continue;
+                }
+                foreach ($slot['actions'] as $actionName => $action) {
+                    if ($actionName === 'duration') {
+                        continue;
+                    }
+                    foreach ($action as $modeName => $mode) {
+                        if ($modeName === 'duration') {
+                            continue;
+                        }
+                        $csv->insert(array($calName, $slotName, $actionName, $modeName, $mode));
+                    }
+                }
+            }
+        }
+        return $csv;
     }
 
     private function extendTitle($name)

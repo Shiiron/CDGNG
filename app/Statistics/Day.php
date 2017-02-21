@@ -7,4 +7,9 @@ class Day extends Statistic
     {
         return $calendar->getData('day');
     }
+
+    protected function getSlotName()
+    {
+        return('Jour (YYYY/MM/DD)');
+    }
 }

@@ -7,4 +7,17 @@ class All extends Statistic
     {
         return $calendar->getData();
     }
+
+    protected function getSlotName()
+    {
+        return('All');
+    }
+
+    public function exportAsCsv()
+    {
+        // Supprime la colonne Slot (inutile dans ce cas)
+        $csv = parent::exportAsCsv();
+        $csv->removeColumn(1);
+        return $csv;
+    }
 }

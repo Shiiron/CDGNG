@@ -7,4 +7,9 @@ class Month extends Statistic
     {
         return $calendar->getData('month');
     }
+
+    protected function getSlotName()
+    {
+        return('Mois (YYYY/MM)');
+    }
 }
