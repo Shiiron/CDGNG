@@ -6,10 +6,10 @@
   <title>CDG : Analyseur de calendrier</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
-  <link rel="stylesheet" href="css/datepicker.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="themes/default/css/bootstrap.min.css">
+  <link rel="stylesheet" href="themes/default/css/bootstrap-responsive.min.css">
+  <link rel="stylesheet" href="themes/default/css/datepicker.css">
+  <link rel="stylesheet" href="themes/default/css/style.css">
 
 </head>
 
@@ -220,35 +220,11 @@
 
   </div>
 
-  <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="themes/default/js/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="themes/default/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="themes/default/js/bootstrap-datepicker.js"></script>
 
   <script type="text/javascript">
-    $('#simpleError').click(function() {
-      if ($('#simpleError').is(':checked')) {
-        $('.errorLvl0').css('display', 'list-item');
-      } else {
-        $('.errorLvl0').css('display', 'none');
-      }
-    });
-
-    $('#seriousError').click(function() {
-      if ($('#seriousError').is(':checked')) {
-        $('.errorLvl1').css('display', 'list-item');
-      } else {
-        $('.errorLvl1').css('display', 'none');
-      }
-    });
-
-    $('#warningError').click(function() {
-      if ($('#warningError').is(':checked')) {
-        $('.errorLvl2').css('display', 'list-item');
-      } else {
-        $('.errorLvl2').css('display', 'none');
-      }
-    });
-
     $('#showArchived').on("click", function() {
       if ($('#showArchived').is(':checked')) {
         $('tr.archived').css('display', 'table-row');
@@ -256,13 +232,8 @@
         $('tr.archived').css('display', 'none');
       }
     });
-  </script>
 
-  <script>
     $('.datepicker').datepicker();
   </script>
-
-  <script></script>
-
 </body>
 </html>
