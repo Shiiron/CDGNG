@@ -28,11 +28,6 @@ class Model
         $this->modes = $modes;
     }
 
-    /**
-     * Load calendars list
-     *
-     * @return array Calendars list
-     */
     public function loadCalendarsList()
     {
         $this->calendars = array();
@@ -52,5 +47,57 @@ class Model
         }
 
         ksort($this->calendars);
+    }
+
+    public function exportActionsNoArchivesToCsv()
+    {
+        $csv = new Csv();
+        $csv->insert(array('Code', 'Intitulé', 'Description', 'Référent'));
+        foreach ($this->actions as $code => $action) {
+            if ($action['Visible'] === 1) {
+                $csv->insert(
+                    array(
+                        $code,
+                        $action['Intitulé'],
+                        $action['Description'],
+                        $action['Referent']
+                    )
+                );
+            }
+        }
+        return $csv;
+    }
+
+    public function exportModesToCsv()
+    {
+        $csv = new Csv();
+        $csv->insert(array('Code', 'Intitulé', 'Description'));
+        foreach ($this->modes as $code => $mode) {
+            $csv->insert(
+                array(
+                    $code,
+                    $mode['Intitulé'],
+                    $mode['Description']
+                )
+            );
+        }
+        return $csv;
+    }
+
+    public function exportActionsWithArchivedToCsv()
+    {
+        $csv = new Csv();
+        $csv->insert(array('Code', 'Intitulé', 'Description', 'Référent'));
+        foreach ($this->actions as $code => $action) {
+            $csv->insert(
+                array(
+                    $code,
+                    $action['Intitulé'],
+                    $action['Description'],
+                    $action['Referent']
+                )
+            );
+        }
+        return $csv;
     }
 }

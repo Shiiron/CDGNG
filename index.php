@@ -87,11 +87,21 @@ switch ($action) {
         break;
 
     case "tableauAction":
-        $view->exportTableauCDG("actions", isset($_POST["showArchived"]));
+        if (isset($_POST["showArchived"])) {
+            $csv = $model->exportActionsWithArchivedToCsv();
+        }
+
+        if (!isset($_POST["showArchived"])) {
+            $csv = $model->exportActionsNoArchivesToCsv();
+        }
+
+        $view = new Views\CsvView('action.csv', $csv);
+        $view->show();
         break;
 
     case "tableauModalite":
-        $view->exportTableauCDG("modalites");
+        $view = new Views\CsvView('modalites.csv', $model->exportModesToCsv());
+        $view->show();
         break;
 
     default:
