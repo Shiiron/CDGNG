@@ -11,7 +11,7 @@
 namespace CDGNG;
 
 if (!is_dir('vendor')) {
-    print('Vous devez executer "composer install" dans le dossier de la Ferme.');
+    print('Vous devez executer "composer install".');
     exit;
 }
 $loader = require __DIR__ . '/vendor/autoload.php';
@@ -19,7 +19,7 @@ $loader = require __DIR__ . '/vendor/autoload.php';
 include "./data/actions.php";
 include "./data/modalites.php";
 
-$model = new Model("config.php");
+$model = new Model("config.php", $GLOBALS['actions'], $GLOBALS['modalites']);
 $model->loadCalendarsList();
 
 $view = new View($model);
@@ -31,12 +31,36 @@ if (isset($_POST["action"])) {
 switch ($action) {
     case "Show":
         if (isset($_POST["ics"])) {
-            $view->showResults(
-                $_POST["ics"],
-                $_POST["startDate"],
-                $_POST["endDate"],
-                $_POST["export"]
-            );
+            $tab = explode("-", $_POST["startDate"], 3);
+            $dtstart = strtotime($tab[2] . "-" . $tab[1] . "-" . $tab[0]);
+
+            $tab = explode("-", $_POST["endDate"], 3);
+            $dtend = mktime(23, 59, 59, $tab[1], $tab[0], $tab[2]);
+
+            switch($_POST["export"]) {
+                case "day":
+                    $stat = new Statistics\Day($dtstart, $dtend);
+                    break;
+                case "week":
+                    $stat = new Statistics\Week($dtstart, $dtend);
+                    break;
+                case "month":
+                    $stat = new Statistics\Month($dtstart, $dtend);
+                    break;
+                case "year":
+                    $stat = new Statistics\Year($dtstart, $dtend);
+                    break;
+                default:
+                    $stat = new Statistics\All($dtstart, $dtend);
+                    break;
+            }
+
+            foreach ($_POST["ics"] as $calName) {
+                $stat->add($model->calendars[$calName]);
+            }
+
+            $view = new Views\Results($model, $stat);
+            $view->show();
             break;
         }
         print ("Aucun fichier n'a été sélectionné");

@@ -95,7 +95,7 @@
             <div class="controls">
               <select name='ics[]' size='10' class='span3' multiple='multiple'>
                 {% for name,path in calendars %}
-                  <option id='{{ name }}' name='ics' value='{{ path }}'>{{ name }}</option>
+                  <option id='{{ name }}' name='ics' value='{{ name }}'>{{ name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -181,7 +181,7 @@
             <div class="controls">
               <select name="ics[]" class="span3">
                 {% for name,path in calendars %}
-                  <option id='{{ name }}' name='ics' value='{{ path }}'>{{ name }}</option>
+                  <option id='{{ name }}' name='ics' value='{{ name }}'>{{ name }}</option>
                 {% endfor %}
               </select>
             </div>

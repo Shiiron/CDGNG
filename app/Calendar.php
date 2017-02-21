@@ -11,34 +11,17 @@ namespace CDGNG;
  */
 class Calendar
 {
-    /**
-     * Path to calendar file
-     * @var string $path
-     */
-    private $path;
-    /**
-     * Total duration for all valid events
-     * @var int $totalLength
-     */
-    private $totalLength;
-    /**
-     * Time per day per action/code [day][action][modalite][length]
-     * @var array $dailyTime
-     */
-    private $dailyTime;
-    /**
-     * List of bad events with error type [level][summary][description]
-     * @var array $errors
-     */
-    private $errors;
+    private $dailyTime = array();
 
+    public $path;
+    public $length = 0;
+    public $errors = array();
+    public $name = "";
 
     public function __construct($path)
     {
         $this->path = $path;
-        $this->totalLength = 0;
-        $this->dailyTime = array();
-        $this->errors = array();
+        $this->name = basename($path, '.ics');
     }
 
     /**
@@ -74,56 +57,6 @@ class Calendar
                 $this->addToError($error[0], $event, $error[1]);
             }
         }
-    }
-
-    /**
-     * Add event to valid event array
-     *
-     * @param Event $event Event to add
-     */
-
-    private function addEvent($event)
-    {
-        $code = $event->getCode();
-        $result = $event->cutByDay();
-
-        foreach ($result as $day => $time) {
-            if (isset($this->dailyTime[$day][$code["act"]][$code["mod"]])) {
-                $this->dailyTime[$day][$code["act"]][$code["mod"]] += $time;
-                continue;
-            }
-            $this->dailyTime[$day][$code["act"]][$code["mod"]] = $time;
-        }
-        $this->totalLength += $event->getLength();
-    }
-
-    /**
-     * Add error to error array
-     *
-     * @param int    $level         Error level (0-2)
-     * @param Event  $event         Unvalid event
-     * @param string $description   Error description
-     *
-     */
-    private function addToError($level, $event, $description)
-    {
-        $this->errors[] = array(
-            "LEVEL"       => $level,
-            "SUMMARY"     => $event->getSummary(),
-            "DESCRIPTION" => $description,
-            "DTSTART"     => date("d-m-Y H:i", $event->getStart()),
-            "DTEND"       => date("H:i", $event->getEnd())
-        );
-    }
-
-    /**
-     * Return calendar name from calendar file (X-WR-CALNAME field)
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return basename($this->path, '.ics');
     }
 
     public function getData($slot = "total")
@@ -180,23 +113,31 @@ class Calendar
                 foreach ($subCode as $modalite => $duration) {
                     if (!isset($output[$slot]['actions'][$action][$modalite])) {
                         $output[$slot]['actions'][$action][$modalite] = 0;
-                        $output[$slot]['modalites'][$modalite][$action] = 0;
+                        $output[$slot]['modes'][$modalite][$action] = 0;
                     }
                     $output[$slot]['actions'][$action][$modalite] += $duration;
-                    $output[$slot]['modalites'][$modalite][$action] += $duration;
+                    $output[$slot]['modes'][$modalite][$action] += $duration;
 
                     if (!isset($output[$slot]['actions'][$action]['duration'])) {
                         $output[$slot]['actions'][$action]['duration'] = 0;
                     }
                     $output[$slot]['actions'][$action]['duration'] += $duration;
 
-                    if (!isset($output[$slot]['modalites'][$modalite]['duration'])) {
-                        $output[$slot]['modalites'][$modalite]['duration'] = 0;
+                    if (!isset($output[$slot]['modes'][$modalite]['duration'])) {
+                        $output[$slot]['modes'][$modalite]['duration'] = 0;
                     }
-                    $output[$slot]['modalites'][$modalite]['duration']  += $duration;
+                    $output[$slot]['modes'][$modalite]['duration']  += $duration;
 
                     $output[$slot]['duration'] += $duration;
                     $output['duration'] += $duration;
+                }
+                ksort($output[$slot]['actions']);
+                foreach (array_keys($output[$slot]['actions']) as $actionName) {
+                    ksort($output[$slot]['actions'][$actionName]);
+                }
+                ksort($output[$slot]['modes']);
+                foreach (array_keys($output[$slot]['modes']) as $modeName) {
+                    ksort($output[$slot]['modes'][$modeName]);
                 }
             }
         }
@@ -206,26 +147,41 @@ class Calendar
     }
 
     /**
-     * Return calendar's path
+     * Add event to valid event array
+     *
+     * @param Event $event Event to add
      */
-    public function getPath()
+    private function addEvent($event)
     {
-        return $this->path;
+        $code = $event->getCode();
+        $result = $event->cutByDay();
+
+        foreach ($result as $day => $time) {
+            if (isset($this->dailyTime[$day][$code["act"]][$code["mod"]])) {
+                $this->dailyTime[$day][$code["act"]][$code["mod"]] += $time;
+                continue;
+            }
+            $this->dailyTime[$day][$code["act"]][$code["mod"]] = $time;
+        }
+        $this->length += $event->getLength();
     }
 
     /**
-     * Return all valid events's duration
+     * Add error to error array
+     *
+     * @param int    $level         Error level (0-2)
+     * @param Event  $event         Unvalid event
+     * @param string $description   Error description
+     *
      */
-    public function getTotalLength()
+    private function addToError($level, $event, $description)
     {
-        return $this->totalLength;
-    }
-
-    /**
-     * Return error detected when parsing calendar
-     */
-    public function getErrors()
-    {
-        return $this->errors;
+        $this->errors[] = array(
+            "LEVEL"       => $level,
+            "SUMMARY"     => $event->getSummary(),
+            "DESCRIPTION" => $description,
+            "DTSTART"     => date("d-m-Y H:i", $event->getStart()),
+            "DTEND"       => date("H:i", $event->getEnd())
+        );
     }
 }

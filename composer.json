@@ -13,7 +13,8 @@
         "psr-4": {
           "CDGNG\\": "app",
           "CDGNG\\Parser\\": "app/Parser",
-          "CDGNG\\Views\\": "app/Views"
+          "CDGNG\\Views\\": "app/Views",
+          "CDGNG\\Statistics\\": "app/Statistics"
         }
     },
     "require": {

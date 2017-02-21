@@ -11,9 +11,9 @@ class Main extends TwigView
     protected function getData()
     {
         return array(
-            'actions' => $GLOBALS['actions'],
-            'modes' => $GLOBALS['modalites'],
-            'calendars' => $this->model->getCalList(),
+            'actions' => $this->model->actions,
+            'modes' => $this->model->modes,
+            'calendars' => $this->model->calendars,
         );
     }
 }

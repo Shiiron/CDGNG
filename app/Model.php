@@ -11,20 +11,21 @@ namespace CDGNG;
  */
 class Model
 {
-
     private $config;
-    private $calendars;
-
+    public $calendars = array();
+    public $actions = array();
+    public $modes = array();
 
     /**
      * Constructeur
      *
      * @param string $configPath Path to config file
      */
-    public function __construct($configPath)
+    public function __construct($configPath, $actions, $modes)
     {
         include_once($configPath);
-        $this->calendars = array();
+        $this->actions = $actions;
+        $this->modes = $modes;
     }
 
     /**
@@ -32,82 +33,26 @@ class Model
      *
      * @return array Calendars list
      */
-    public function getCalList()
+    public function loadCalendarsList()
     {
-
-        $result = array();
+        $this->calendars = array();
+        $calPath = $this->config['calendars_path'];
 
         //Remplissage du tableau
-        if ($handle = opendir($this->config['calendars_path'])) {
+        if ($handle = opendir($calPath)) {
             while (false !== ($entry = readdir($handle))) {
-                if (substr_compare($entry, ".ics", -4, 4, true) == 0) {
-                    $path = $this->config['calendars_path'] . $entry;
+                if (substr_compare($entry, ".ics", -4, 4, true) === 0) {
+                    $path = $calPath . $entry;
                     if (is_file($path)) {
-                        $result[basename($path, '.ics')] = $path;
+                        $calendar = new Calendar($path);
+                        $this->calendars[$calendar->name] = $calendar;
                     }
                 }
             }
             closedir($handle);
         }
-
         //Tri du tableau
-        ksort($result);
-
-        return $result;
-    }
-
-    /**
-     * Make timestamp from date string (start of day)
-     *
-     * @param string $str date as string
-     *
-     * @return int timestamp
-     */
-    public function strToTime($str)
-    {
-        $tab = explode("-", $str, 3);
-        return strtotime($tab[2] . "-" . $tab[1] . "-" . $tab[0]);
-    }
-
-    /**
-     * Make timestamp from date string (End of day)
-     *
-     * @param string $str date as string
-     *
-     * @return int timestamp
-     */
-    public function strToTimeEndDate($str)
-    {
-        $tab = explode("-", $str, 3);
-        $time = mktime(23, 59, 59, $tab[1], $tab[0], $tab[2]);
-        return $time;
-    }
-
-    /**
-     * Analyse one or more calendars
-     *
-     * @param string $calPath Path to calendar
-     * @param int    $tsStart Start of event timestamp
-     * @param int      $tsEnd   End of event timestamp
-     */
-    public function analyseCal($calPath, $tsStart, $tsEnd)
-    {
-        //Reset tab
-        $this->actions = array();
-        $this->modalites = array();
-        $this->total = 0;
-        $this->tabError = array();
-
-        $tsStart = $this->strToTime($tsStart);
-        $tsEnd = $this->strToTimeEndDate($tsEnd);
-
-        //Parse each calendar
-        foreach ($calPath as $path) {
-            $cal = new Calendar($path);
-            $name = $cal->getname();
-            $this->calendars[$name] = $cal;
-            $this->calendars[$name]->parse($tsStart, $tsEnd);
-        }
+        ksort($this->calendars);
     }
 
     /**
@@ -125,38 +70,6 @@ class Model
     }
 
     /**
-     * Return calendar's data
-     *
-     * @param string $type Result by action or by modalites (byAction, byModalite)
-     * @param string $slot define time slot (day, week, month, year, all)
-     * @param bool $fusion Définis si il faut fusionner les données des différents calendriers
-     */
-
-    public function getData($slot = "All")
-    {
-        $output = array();
-        foreach ($this->calendars as $name => $calendar) {
-            $output[$name] = $calendar->getData($slot);
-            $output[$name]['duration'] = $calendar->getTotalLength();
-        }
-        return $output;
-    }
-
-    /**
-     * Calculate sum of duration of all valid events
-     *
-     * @return int Duration of all valid events for all selected calendars
-     */
-    public function getTotal()
-    {
-        $total = 0;
-        foreach ($this->calendars as $calendar) {
-            $total += $calendar->getTotalLength();
-        }
-        return $total;
-    }
-
-    /**
      * Return name of selected calendars
      *
      * @return string
@@ -169,4 +82,32 @@ class Model
         }
         return substr($output, 0, -1);
     }
+
+    /**
+     * Make timestamp from date string (start of day)
+     *
+     * @param string $str date as string
+     *
+     * @return int timestamp
+     */
+    private function strToTime($str)
+    {
+        $tab = explode("-", $str, 3);
+        return strtotime($tab[2] . "-" . $tab[1] . "-" . $tab[0]);
+    }
+
+    /**
+     * Make timestamp from date string (End of day)
+     *
+     * @param string $str date as string
+     *
+     * @return int timestamp
+     */
+    private function strToTimeEndDate($str)
+    {
+        $tab = explode("-", $str, 3);
+        $time = mktime(23, 59, 59, $tab[1], $tab[0], $tab[2]);
+        return $time;
+    }
+
 }
