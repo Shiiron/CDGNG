@@ -95,13 +95,15 @@ switch ($action) {
     case "tableauAction":
         if (isset($_POST["showArchived"])) {
             $csv = $model->exportActionsWithArchivedToCsv();
+            $filename = 'action+archive.csv';
         }
 
         if (!isset($_POST["showArchived"])) {
             $csv = $model->exportActionsNoArchivesToCsv();
+            $filename = 'action.csv';
         }
 
-        $view = new Views\CsvView('action.csv', $csv);
+        $view = new Views\CsvView($filename, $csv);
         $view->show();
         break;
 
